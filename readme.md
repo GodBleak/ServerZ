@@ -1,4 +1,6 @@
 # ServerZ
+> [!NOTE]
+> This is a mirror of [ServerZ on my GitLab instance](https://gitlab.godbleak.dev/godbleak/serverz), and is not the primary repository. 
 
 ServerZ is a server manager for DayZ running in containerized environments. It's highly configurable through the use of environment variables.
 
