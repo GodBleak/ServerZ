@@ -14,7 +14,7 @@ export let config = {
         adminLog: process.env.ADMIN_LOG?.toLowerCase() === "true",
         netLog: process.env.NET_LOG?.toLowerCase() === "true",
         freezeCheck: process.env.FREEZE_CHECK?.toLowerCase() === "true",
-        modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())),
+        modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())).filter((mod) => !isNaN(mod)),
         modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
         modPath: "steamapps/workshop/content",
         steamUsername: process.env.STEAM_USERNAME,

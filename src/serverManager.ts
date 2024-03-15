@@ -53,6 +53,7 @@ export class ServerManager {
      * Downloads/updates and installs the mods listed in the configuration.
      */
     public async updateMods() {
+        if(!config.meta.modList.length) return console.log("No mods to install");
         const modFeedback = new ModInstallationFeedback();
         if(config.meta.serverDirectory) this.steamCMD.forceDir(config.meta.serverDirectory)
         for(const mod of config.meta.modList) {
