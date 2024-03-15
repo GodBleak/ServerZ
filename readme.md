@@ -73,3 +73,6 @@ npm start
 ## Environment Variables
 <!-- refer to doc at `doc/environment_variables.md -->
 See [Environment Variables](doc/environment_variables.md).
+
+## Issues
+If you encounter any issues, please report them [here](https://gitlab.godbleak.dev/godbleak/serverz/issues). (You can use GitHub SSO to sign in)
