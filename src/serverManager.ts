@@ -98,7 +98,7 @@ export class ServerManager {
             cwd: config.meta.serverDirectory,
             stdio: "inherit"
         });
-        console.log(`Reigns passed to DayZServer. Good luck, Survivor!\n\n`);
+        console.log(`Reigns passed to DayZServer(${server.pid}). Good luck, Survivor!\n\n`);
         return server;
     }
 }
