@@ -1,0 +1,28 @@
+{
+  "name": "ServerZ",
+  "version": "1.0.0",
+  "description": "DayZ server manager for containerized environments",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["DayZ", "Server"],
+  "author": "GodBleak",
+  "license": "MIT",
+  "dependencies": {
+    "@types/cli-progress": "^3.11.5",
+    "cli-progress": "^3.12.0",
+    "dotenv": "^16.4.5",
+    "node-pty": "^1.0.0",
+    "strip-ansi": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.26",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
+  }
+}
