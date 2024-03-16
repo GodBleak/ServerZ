@@ -49,9 +49,12 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | INSTANCE_ID | instanceId | 1 |
 | STORAGE_AUTO_FIX | storageAutoFix | 1 |
 | MOTD | motd | DayZ on Docker! |
-| RESPAWN_TIME | respawnTime | 0 |
 | MOTD_INTERVAL | motdInterval | 300 |
-| MAX_PING | maxPing | 200 |
+| STEAM_QUERY_PORT | steamQueryPort | 2305 |
+| RESPAWN_TIME | respawnTime | 0 |
+| PING_WARNING | pingWarning | 200 |
+| PING_CRITICAL | pingCritical | 250 |
+| MAX_PING | maxPing | 300 |
 | TIMESTAMP_FORMAT | timeStampFormat | Short |
 | LOG_AVERAGE_FPS | logAverageFPS | 3600 |
 | LOG_MEMORY | logMemory | 3600 |
@@ -79,3 +82,5 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | DISABLE_RESPAWN_DIALOG | disableRespawnDialog | 0 |
 | LOOT_HISTORY | lootHistory | 1 |
 | STORE_HOUSE_STATE_DISABLED | storeHouseStateDisabled | false |
+| SERVER_FPS_WARNING | serverFPSWarning | 15 |
+| SHOT_VALIDATION | shotValidation | 1 |

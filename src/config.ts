@@ -44,9 +44,12 @@ export let config = {
         instanceID: parseInt(process.env.INSTANCE_ID || "1"),
         storageAutoFix: parseInt(process.env.STORAGE_AUTO_FIX || "1"),
         motd: process.env.MOTD || "DayZ on Docker!",
-        respawnTime: parseInt(process.env.RESPAWN_TIME || "0"),
         motdInterval: parseInt(process.env.MOTD_INTERVAL || "300"),
-        maxPing: parseInt(process.env.MAX_PING || "200"),
+        steamQueryPort: parseInt(process.env.STEAM_QUERY_PORT || "2305"),
+        respawnTime: parseInt(process.env.RESPAWN_TIME || "0"),
+        pingWarning: parseInt(process.env.PING_WARNING || "200"),
+        pingCritical: parseInt(process.env.PING_CRITICAL || "250"),
+        maxPing: parseInt(process.env.MAX_PING || "300"),
         timestampFormat: process.env.TIMESTAMP_FORMAT || "Short",
         logAverageFPS: parseInt(process.env.LOG_AVERAGE_FPS || "3600"),
         logMemory: parseInt(process.env.LOG_MEMORY || "3600"),
@@ -74,6 +77,8 @@ export let config = {
         disableRespawnDialog: parseInt(process.env.DISABLE_RESPAWN_DIALOG || "0"),
         lootHistory: parseInt(process.env.LOOT_HISTORY || "1"),
         storeHouseStateDisabled: process.env.STORE_HOUSE_STATE_DISABLED?.toLowerCase() === "true",
+        serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
+        shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
     }
 }
 
