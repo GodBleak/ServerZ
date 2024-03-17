@@ -9,10 +9,10 @@ async function main() {
     const serverManager = new ServerManager(steamCMD);
 
     await serverManager.init()
-    await serverManager.downloadServer();
-    await serverManager.updateMods();
+    if(!config.meta.skipUpdate) await serverManager.downloadServer();
+    if(!config.meta.skipMods) await serverManager.updateMods();
     await serverManager.writeConfig();
-    serverManager.startServer();
+    if(config.meta.startDayZServer) serverManager.startServer();
 }
 
 main();

@@ -22,6 +22,9 @@ export let config = {
         steamGuardCode: process.env.STEAM_GUARD_CODE,
         serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
         extraStartupArgs: process.env.EXTRA_STARTUP_ARGS,
+        skipUpdate: process.env.SKIP_UPDATE?.toLowerCase() === "true",
+        skipMods: process.env.SKIP_MODS?.toLowerCase() === "true",
+        startDayZServer: process.env.START_DAYZ_SERVER?.toLowerCase() !== "false",
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
