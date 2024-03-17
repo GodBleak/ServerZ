@@ -74,5 +74,24 @@ npm start
 <!-- refer to doc at `doc/environment_variables.md -->
 See [Environment Variables](doc/environment_variables.md).
 
+## Installing Mods
+To install mods, set the `MOD_LIST` environment variable to a comma separated list of workshop item IDs. For example, to install CF and VPPAdminTools, you'd use the following docker run command:
+```bash
+docker run -d -P \
+    -v "/path/to/persistent/dayz/directory:/dayz" \
+    -v "/path/to/persistent/profiles/directory:/profiles" \
+    -e "STEAM_USERNAME=your_steam_username" \
+    -e "STEAM_PASSWORD=your_steam_password" \
+    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
+    -e "MOD_LIST=1559212036,1828439124" \
+    --restart unless-stopped \
+    registry.godbleak.dev/godbleak/serverz:latest
+```
+## Experimental
+To run the experimental DayZ Server, change the `APP_ID` environment variable to it's app ID (1042420).
+
+### Mods
+To install mods when running the experimental server, set the `MOD_APP_ID` environment variable to the app ID of the experimental client (1024020). This changes the steamCMD command to download the mods from the workshop associated with the experimental client.
+
 ## Issues
 If you encounter any issues, please report them [here](https://gitlab.godbleak.dev/godbleak/serverz/issues). (You can use GitHub SSO to sign in)
