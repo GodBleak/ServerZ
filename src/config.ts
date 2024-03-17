@@ -46,7 +46,7 @@ export let config = {
         loginQueueMaxPlayers: parseInt(process.env.LOGIN_QUEUE_MAX_PLAYERS || "500"),
         instanceID: parseInt(process.env.INSTANCE_ID || "1"),
         storageAutoFix: parseInt(process.env.STORAGE_AUTO_FIX || "1"),
-        motd: process.env.MOTD || "DayZ on Docker!",
+        motd: process.env.MOTD || "DayZ in a Box!",
         motdInterval: parseInt(process.env.MOTD_INTERVAL || "300"),
         steamQueryPort: parseInt(process.env.STEAM_QUERY_PORT || "2305"),
         respawnTime: parseInt(process.env.RESPAWN_TIME || "0"),
