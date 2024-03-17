@@ -6,7 +6,7 @@ import type { SteamCMD } from "./lib/index.js";
 import { readFile, link, symlink, stat, readdir, writeFile} from "fs/promises";
 import { spawn } from "child_process";
 
-export class ServerManager {
+export class Server {
     private modNameList:string[] = []
 
     constructor(private steamCMD: SteamCMD) {}
@@ -90,7 +90,7 @@ export class ServerManager {
      * The server is spawned in the `serverDirectory` and detached from the current process.
      * @returns The spawned server process.
      */
-    public startServer() {
+    public start() {
         const command = this.getStartCommand();
         console.log(`Starting server with command: ${command}\n\n`);
         const server = spawn(command, {

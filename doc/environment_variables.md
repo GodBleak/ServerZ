@@ -24,6 +24,9 @@ Note: This separation is superficial and is only used to organize the variables.
 | NET_LOG | false | adds -netlog to the server start command |
 | FREEZE_CHECK | false | adds -freezecheck to the server start command |
 | EXTRA_STARTUP_ARGS | | Any additional arguments to pass to the server start command |
+| SKIP_UPDATE | false | Skips the server update process |
+| SKIP_MOD_UPDATE | false | Skips the mod update process |
+| START_DAYZ_SERVER | true | Starts DayZServer. Set to false if you, for example, only want to update the server and mods. |
 
 ## Server
 Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`).

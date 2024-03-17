@@ -1,6 +1,6 @@
 # ServerZ
 
-ServerZ is a server manager for DayZ running in containerized environments. It's highly configurable through the use of environment variables.
+ServerZ is a DayZ server made for running in containerized environments. It's highly configurable through the use of environment variables.
 
 ## Features
 - Automatic server installation and update.

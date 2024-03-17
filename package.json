@@ -1,7 +1,7 @@
 {
   "name": "ServerZ",
   "version": "1.0.0",
-  "description": "DayZ server manager for containerized environments",
+  "description": "DayZ server for containerized environments",
   "main": "index.js",
   "type": "module",
   "scripts": {
