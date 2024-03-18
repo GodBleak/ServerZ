@@ -200,7 +200,7 @@ services:
       STEAM_GUARD_CODE: your_steam_guard_code
       MOD_LIST: 1559212036,2415195639 # CF, Banov
       MAP_URL: https://github.com/KubeloLive/Banov.git
-      MISSION_PATH: /dayz/maps/Banov
+      MISSION_PATH: /dayz/maps/Banov/empty.banov
       TEMPLATE: empty.banov
     ports:
       - 2302-2305:2302-2305/udp
