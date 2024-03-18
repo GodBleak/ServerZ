@@ -3,14 +3,13 @@ import { generateConfig } from "./generateConfig.js"
 import { ModInstallationFeedback, ServerDownloadFeedback } from "./feedbackHandlers.js";
 import type { SteamCMD } from "./lib/index.js";
 
-import { readFile, link, symlink, stat, readdir, writeFile} from "fs/promises";
+import { readFile, link, symlink, stat, readdir, writeFile, rm} from "fs/promises";
 import { spawn } from "child_process";
 
 export class Server {
     private modNameList:string[] = []
 
     constructor(private steamCMD: SteamCMD) {}
-
     /**
      * Generates the command to start the server, based on configuration and mod list.
      * 
@@ -26,6 +25,28 @@ export class Server {
         if(config.meta.freezeCheck) commandComponents.push("-freezecheck");
         if(config.meta.extraStartupArgs) commandComponents.push(config.meta.extraStartupArgs);
         return commandComponents.join(" ");
+    }
+
+    /**
+     * Removes any mods from the server directory that are not included in the current mod list.
+     */
+    private async cleanMods() {
+        if(!(await exists(config.meta.modPath))) return;
+        const mods = await readdir(config.meta.modPath)
+        const disabledMods = mods.map((mod) => parseInt(mod)).filter((mod) => !config.meta.modList.includes(mod));
+        const disabledModNames = await Promise.all(disabledMods.map(getModName))
+        for(const [id, name] of disabledModNames) {
+            const keyPath = await getKeysPath(id);
+            const keys = await readdir(keyPath);
+            for(const key of keys) {
+                const keyExistsInRootKeys = await exists(`${config.meta.serverDirectory}/keys/${key}`);
+                if(!keyExistsInRootKeys) continue;
+                await rm(`${config.meta.serverDirectory}/keys/${key}`);
+            }
+            const modExistsInServerRoot = await exists(`${config.meta.serverDirectory}/@${name}`);
+            if (modExistsInServerRoot) await rm(`${config.meta.serverDirectory}/@${name}`, {recursive: true});
+            await rm(`${config.meta.modPath}/${id}`, {recursive: true})
+        }
     }
 
     /**
@@ -53,6 +74,7 @@ export class Server {
      * Downloads/updates and installs the mods listed in the configuration.
      */
     public async updateMods() {
+        if(config.meta.cleanMods) await this.cleanMods();
         if(!config.meta.modList.length) return console.log("No mods to install");
         const modFeedback = new ModInstallationFeedback();
         if(config.meta.serverDirectory) this.steamCMD.forceDir(config.meta.serverDirectory)
@@ -104,6 +126,11 @@ export class Server {
     }
 }
 
+
+async function exists(path: string): Promise<boolean> {
+    return await stat(path).then(() => true).catch(() => false);
+} 
+
 /**
  * Fetches the name of a mod by reading its metadata file.
  * @param {number} id The mod's ID.
@@ -125,7 +152,7 @@ async function getModName(id: number): Promise<[id: number, name: string]>{
 async function createModSymlink(id: number, name: string) {
     const sourcePath = `${config.meta.modPath}/${id}`;
     const targetPath = `${config.meta.serverDirectory}/@${name}`;
-    const targetExists = await stat(targetPath).then(() => true).catch(() => false);
+    const targetExists = await exists(targetPath);
     if(targetExists) return;
     await symlink(sourcePath, targetPath);
 }
@@ -141,12 +168,11 @@ async function createModKeyLinks(id: number) {
     for(const key of keys) {
         const sourcePath = `${keysPath}/${key}`;
         const targetPath = `${config.meta.serverDirectory}/keys/${key}`;
-        const targetExists = await stat(targetPath).then(() => true).catch(() => false);
+        const targetExists = await exists(targetPath);
         if(targetExists) continue;
         await link(sourcePath, targetPath);
     }
 }
-
 
 /**
  * Fetches the correct path to a mod's keys directory.
@@ -162,4 +188,4 @@ async function getKeysPath(id: number) {
     if(!keysDir) keysDir = modDir.find((dir) => dir === "Keys");
     if(!keysDir) throw new Error(`Could not find keys directory for mod ${id}`);
     return `${config.meta.modPath}/${id}/${keysDir}`;
-} 
+}

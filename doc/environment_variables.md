@@ -15,6 +15,7 @@ Note: This separation is superficial and is only used to organize the variables.
 | MOD_LIST | | A comma separated list of mod IDs to download and enable on the server |
 | MOD_APP_ID | 221100 | The Steam App ID the workshop items (AKA: the mods) are associated with |
 | MODS_PATH | `${SERVER_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The path to where the downloaded workshop items can be found |
+| CLEAN_MODS | false | Uninstalls and deletes all mods not found in MOD_LIST. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
 | STEAM_USERNAME | anonymous | The username for the Steam account to use for downloading the server and mods |
 | STEAM_PASSWORD | | The password for the Steam account to use for downloading the server and mods |
 | STEAM_GUARD_CODE | | The Steam Guard code for the Steam account to use for downloading the server and mods |

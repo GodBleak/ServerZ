@@ -3,9 +3,13 @@ import {cpus} from "os"
 
 export let config = {
     meta:{
+        steamUsername: process.env.STEAM_USERNAME,
+        steamPassword: process.env.STEAM_PASSWORD,
+        steamGuardCode: process.env.STEAM_GUARD_CODE,
+        appID: parseInt(process.env.APP_ID || "223350"),
         steamBinaryPath: process.env.STEAM_BINARY_PATH || "/usr/games/steamcmd",
         dayZBinaryPath: "DayZServer",
-        appID: parseInt(process.env.APP_ID || "223350"),
+        serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
         port: parseInt(process.env.PORT || "2302"),
         profilesPath: process.env.PROFILES_PATH || "/profiles",
         configPath: "serverDZ.generated.cfg",
@@ -17,10 +21,7 @@ export let config = {
         modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())).filter((mod) => !isNaN(mod)),
         modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
         modPath: "steamapps/workshop/content",
-        steamUsername: process.env.STEAM_USERNAME,
-        steamPassword: process.env.STEAM_PASSWORD,
-        steamGuardCode: process.env.STEAM_GUARD_CODE,
-        serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
+        cleanMods: process.env.CLEAN_MODS?.toLowerCase() === "true",
         extraStartupArgs: process.env.EXTRA_STARTUP_ARGS,
         skipUpdate: process.env.SKIP_UPDATE?.toLowerCase() === "true",
         skipMods: process.env.SKIP_MODS?.toLowerCase() === "true",
