@@ -11,6 +11,7 @@ RUN echo 'deb http://deb.debian.org/debian bullseye-backports main non-free' >> 
 
 RUN apt update && apt -y upgrade 
 RUN apt -y install --no-install-recommends \
+    git \
     curl \
     ca-certificates \
     libsdl2-2.0-0 \

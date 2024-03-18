@@ -57,7 +57,7 @@ class Missions
 {
     class DayZ
     {
-        template="dayzOffline.chernarusplus";
+        template="${config.server.template}";
     };
 };
 `}

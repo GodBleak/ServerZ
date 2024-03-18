@@ -30,7 +30,7 @@ export class ServerDownloadFeedback {
             const updates = data[updateKey];
             const update = updates[updates.length - 1];
             if(update){
-                if(update.includes("Error!")) {
+                if(update.toLowerCase().includes("error!")) {
                     this.downloadState = "error";
                     this.downloadBar.stop();
                     return console.error("Error downloading update\n", update);

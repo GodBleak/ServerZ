@@ -15,6 +15,7 @@ Note: This separation is superficial and is only used to organize the variables.
 | MOD_LIST | | A comma separated list of mod IDs to download and enable on the server |
 | MOD_APP_ID | 221100 | The Steam App ID the workshop items (AKA: the mods) are associated with |
 | MODS_PATH | `${SERVER_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The path to where the downloaded workshop items can be found |
+| CLEAN_MODS | false | Uninstalls and deletes all mods not found in MOD_LIST. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
 | STEAM_USERNAME | anonymous | The username for the Steam account to use for downloading the server and mods |
 | STEAM_PASSWORD | | The password for the Steam account to use for downloading the server and mods |
 | STEAM_GUARD_CODE | | The Steam Guard code for the Steam account to use for downloading the server and mods |
@@ -24,6 +25,14 @@ Note: This separation is superficial and is only used to organize the variables.
 | NET_LOG | false | adds -netlog to the server start command |
 | FREEZE_CHECK | false | adds -freezecheck to the server start command |
 | EXTRA_STARTUP_ARGS | | Any additional arguments to pass to the server start command |
+| SKIP_UPDATE | false | Skips the server update process |
+| SKIP_MOD_UPDATE | false | Skips the mod update process |
+| START_DAYZ_SERVER | true | Starts DayZServer. Set to false if you, for example, only want to update the server and mods. |
+| MAPS_PATH | `${SERVER_DIRECTORY}/maps` | The path to download maps to. |
+| MAP_URL | | The URL to download the map from. |
+| COPY_MISSION | false | When set to true, will copy the mission directory (specified by MISSION_PATH) to the `mpmissions` directory, instead of symlinking it. |
+| MISSION_PATH | `${SERVER_DIRECTORY}/mpmissions/dayzOffline.chernarusplus` | The path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
+| UPDATE_MAP | false | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
 
 ## Server
 Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`).
@@ -48,7 +57,7 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | LOGIN_QUEUE_MAX_PLAYERS | loginQueueMaxPlayers | 500 |
 | INSTANCE_ID | instanceId | 1 |
 | STORAGE_AUTO_FIX | storageAutoFix | 1 |
-| MOTD | motd | DayZ on Docker! |
+| MOTD | motd | DayZ in a Box! |
 | MOTD_INTERVAL | motdInterval | 300 |
 | STEAM_QUERY_PORT | steamQueryPort | 2305 |
 | RESPAWN_TIME | respawnTime | 0 |
@@ -84,3 +93,4 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | STORE_HOUSE_STATE_DISABLED | storeHouseStateDisabled | false |
 | SERVER_FPS_WARNING | serverFPSWarning | 15 |
 | SHOT_VALIDATION | shotValidation | 1 |
+| TEMPLATE | `Missions.DayZ.template` | dayzOffline.chernarusplus |

@@ -1,18 +1,19 @@
 import { config } from "./config.js"
-import { ServerManager } from "./serverManager.js";
+import { Server } from "./server.js";
 import { SteamCMD } from "./lib/index.js";
 import { NodePTY } from "./lib/steamcmd/adapters/index.js";
 
 async function main() {
     const adapter = new NodePTY({bin: config.meta.steamBinaryPath})
     const steamCMD = new SteamCMD(adapter);
-    const serverManager = new ServerManager(steamCMD);
-
-    await serverManager.init()
-    await serverManager.downloadServer();
-    await serverManager.updateMods();
-    await serverManager.writeConfig();
-    serverManager.startServer();
+    const server = new Server(steamCMD);
+    
+    await server.init()
+    if(!config.meta.skipUpdate) await server.downloadServer();
+    if(!config.meta.skipMods) await server.updateMods();
+    await server.updateMap()
+    await server.writeConfig();
+    if(config.meta.startDayZServer) server.start();
 }
 
 main();

@@ -3,9 +3,13 @@ import {cpus} from "os"
 
 export let config = {
     meta:{
+        steamUsername: process.env.STEAM_USERNAME,
+        steamPassword: process.env.STEAM_PASSWORD,
+        steamGuardCode: process.env.STEAM_GUARD_CODE,
+        appID: parseInt(process.env.APP_ID || "223350"),
         steamBinaryPath: process.env.STEAM_BINARY_PATH || "/usr/games/steamcmd",
         dayZBinaryPath: "DayZServer",
-        appID: parseInt(process.env.APP_ID || "223350"),
+        serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
         port: parseInt(process.env.PORT || "2302"),
         profilesPath: process.env.PROFILES_PATH || "/profiles",
         configPath: "serverDZ.generated.cfg",
@@ -17,11 +21,16 @@ export let config = {
         modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())).filter((mod) => !isNaN(mod)),
         modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
         modPath: "steamapps/workshop/content",
-        steamUsername: process.env.STEAM_USERNAME,
-        steamPassword: process.env.STEAM_PASSWORD,
-        steamGuardCode: process.env.STEAM_GUARD_CODE,
-        serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
+        cleanMods: process.env.CLEAN_MODS?.toLowerCase() === "true",
         extraStartupArgs: process.env.EXTRA_STARTUP_ARGS,
+        skipUpdate: process.env.SKIP_UPDATE?.toLowerCase() === "true",
+        skipMods: process.env.SKIP_MODS?.toLowerCase() === "true",
+        startDayZServer: process.env.START_DAYZ_SERVER?.toLowerCase() !== "false",
+        mapURL: process.env.MAP_URL || "",
+        copyMission: process.env.COPY_MISSION?.toLowerCase() === "true",
+        mapsPath: "maps",
+        missionPath: "",
+        updateMap: process.env.UPDATE_MAP?.toLowerCase() === "true",
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
@@ -43,7 +52,7 @@ export let config = {
         loginQueueMaxPlayers: parseInt(process.env.LOGIN_QUEUE_MAX_PLAYERS || "500"),
         instanceID: parseInt(process.env.INSTANCE_ID || "1"),
         storageAutoFix: parseInt(process.env.STORAGE_AUTO_FIX || "1"),
-        motd: process.env.MOTD || "DayZ on Docker!",
+        motd: process.env.MOTD || "DayZ in a Box!",
         motdInterval: parseInt(process.env.MOTD_INTERVAL || "300"),
         steamQueryPort: parseInt(process.env.STEAM_QUERY_PORT || "2305"),
         respawnTime: parseInt(process.env.RESPAWN_TIME || "0"),
@@ -79,10 +88,12 @@ export let config = {
         storeHouseStateDisabled: process.env.STORE_HOUSE_STATE_DISABLED?.toLowerCase() === "true",
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
+        template: process.env.TEMPLATE || "dayzOffline.chernarusplus"
     }
 }
 
 config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`;
 config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`;
 config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`;
-
+config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`;
+config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`;
