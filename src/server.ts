@@ -3,8 +3,10 @@ import { generateConfig } from "./generateConfig.js"
 import { ModInstallationFeedback, ServerDownloadFeedback } from "./feedbackHandlers.js";
 import type { SteamCMD } from "./lib/index.js";
 
-import { readFile, link, symlink, stat, readdir, writeFile, rm} from "fs/promises";
+import { readFile, link, symlink, cp, stat, readdir, writeFile, rm, mkdir} from "fs/promises";
 import { spawn } from "child_process";
+import Git from "simple-git"
+import { unzip } from 'unzipit';
 
 export class Server {
     private modNameList:string[] = []
@@ -46,6 +48,27 @@ export class Server {
             const modExistsInServerRoot = await exists(`${config.meta.serverDirectory}/@${name}`);
             if (modExistsInServerRoot) await rm(`${config.meta.serverDirectory}/@${name}`, {recursive: true});
             await rm(`${config.meta.modPath}/${id}`, {recursive: true})
+        }
+    }
+
+    /**
+     * Downloads a map from a given URL and extracts it to the maps directory.
+     */
+    private async downloadMap(url: string) {
+        console.log(`Downloading map from ${url}`);
+        await download(url, config.meta.mapsPath, config.meta.updateMap);
+    }
+
+    private async updateMPMissions() {
+        const missionPath = `${config.meta.serverDirectory}/mpmissions/${config.server.template}`;
+        const missionExists = await exists(missionPath);
+        if(missionExists) return;
+        if(config.meta.copyMission) {
+            console.log(`Copying mission from ${config.meta.missionPath} to ${missionPath}`)
+            await cp(config.meta.mapsPath, missionPath);
+        } else {
+            console.log(`Symlinking mission from ${config.meta.missionPath} to ${missionPath}`)
+            await symlink(config.meta.missionPath, missionPath);
         }
     }
 
@@ -97,6 +120,16 @@ export class Server {
     }
 
     /**
+     * Sets up a custom map and symlinks the mpmissions directory to the server directory.
+     * Will also download the map if a URL is provided in the configuration.
+     */
+    public async updateMap() {
+        await mkdir(config.meta.mapsPath, {recursive: true});
+        if(config.meta.mapURL) await this.downloadMap(config.meta.mapURL);
+        await this.updateMPMissions();
+    }
+
+    /**
      * Generates a server configuration file based on environment variables, and writes it to the server directory.
      * The resulting file is named `serverDZ.generated.cfg`.
      */
@@ -126,7 +159,11 @@ export class Server {
     }
 }
 
-
+/**
+ *  Checks if a file or directory exists.
+ * @param {string} path - The path to check.
+ * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether the file or directory exists.
+ */
 async function exists(path: string): Promise<boolean> {
     return await stat(path).then(() => true).catch(() => false);
 } 
@@ -188,4 +225,82 @@ async function getKeysPath(id: number) {
     if(!keysDir) keysDir = modDir.find((dir) => dir === "Keys");
     if(!keysDir) throw new Error(`Could not find keys directory for mod ${id}`);
     return `${config.meta.modPath}/${id}/${keysDir}`;
+}
+
+/**
+ * Downloads a file from a given URL and extracts it to a given directory.
+ * Handles git repositories and zip files.
+ * 
+ * @param from - The URL to clone/download from.
+ * @param to - The directory to extract to.
+ * @param overwrite - Whether to overwrite or update existing files.
+ */
+async function download(from: string, to: string, overwrite: boolean) {
+    const url = from.endsWith("/") ? from.slice(0, -1) : from;
+    const extension = 
+        url.endsWith(".git") ?
+        "git" :
+        url.endsWith(".zip") ?
+        "zip" :
+        "unknown";
+    if(extension === "git") return await getWithGit(url, to, overwrite);
+    else if(extension === "zip") return await getAndExtractZip(url, to, overwrite);
+    else throw new Error(`Unsupported map download type: ${extension}`);
+}
+
+/**
+ * Clones a git repository to a given directory, or pulls if it already exists and `update` is true.
+ * 
+ * @param from - The URL to clone from.
+ * @param to - The directory to clone to.
+ * @param update - Whether to pull if the directory already exists.
+ * @returns 
+ */
+async function getWithGit(from: string, to: string, update: boolean) {
+    const repo = from.split("/").pop();
+    const repoName = repo?.split(".")[0];
+    const targetDir = `${to}/${repoName}`
+    const targetDirExists = await exists(targetDir);
+    if(targetDirExists) {
+        if(!update) return;
+        const git = Git({
+            baseDir: targetDir
+        })
+        return await git.pull()
+    } else {
+        const git = Git({
+            baseDir: to
+        })
+        return await git.clone(from)
+    }
+}
+
+/**
+ * Downloads a zip file from a given URL and extracts it to a given directory.
+ * 
+ * @param from - The URL to download from.
+ * @param to - The directory to extract to.
+ * @param overwrite - Whether to overwrite existing files.
+ */
+async function getAndExtractZip(from: string, to: string, overwrite: boolean) {
+    const response = await fetch(from);
+    const arrayBuffer = await response.arrayBuffer();
+    const zipBuffer = new Uint8Array(arrayBuffer);
+    const {zip, entries} = await unzip(zipBuffer);
+    
+    for(const key in entries) {
+        const splitPath = key.split("/");
+        const isRoot = splitPath.length === 1;
+        if(isRoot) {
+            const targetPath = `${to}/${key}`;
+            const targetExists = await exists(targetPath);
+            if(targetExists && !overwrite) break;
+        }
+        const entry = entries[key];
+        if(entry.isDirectory) await mkdir(`${to}/${key}`, {recursive: true});
+        else {
+            const file = await entry.arrayBuffer();
+            await writeFile(`${to}/${key}`, new Uint8Array(file))
+        }
+    }
 }

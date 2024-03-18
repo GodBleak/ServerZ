@@ -26,6 +26,11 @@ export let config = {
         skipUpdate: process.env.SKIP_UPDATE?.toLowerCase() === "true",
         skipMods: process.env.SKIP_MODS?.toLowerCase() === "true",
         startDayZServer: process.env.START_DAYZ_SERVER?.toLowerCase() !== "false",
+        mapURL: process.env.MAP_URL || "",
+        copyMission: process.env.COPY_MISSION?.toLowerCase() === "true",
+        mapsPath: "maps",
+        missionPath: "",
+        updateMap: process.env.UPDATE_MAP?.toLowerCase() === "true",
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
@@ -83,10 +88,12 @@ export let config = {
         storeHouseStateDisabled: process.env.STORE_HOUSE_STATE_DISABLED?.toLowerCase() === "true",
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
+        template: process.env.TEMPLATE || "dayzOffline.chernarusplus"
     }
 }
 
 config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`;
 config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`;
 config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`;
-
+config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`;
+config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`;
