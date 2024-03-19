@@ -22,6 +22,7 @@ loginQueueMaxPlayers=${config.server.loginQueueMaxPlayers};
 instanceId = ${config.server.instanceID};
 storageAutoFix = ${config.server.storageAutoFix};
 motd[] = {"", "${config.server.motd}"};
+steamQueryPort = ${config.server.steamQueryPort};
 respawnTime = ${config.server.respawnTime};
 motdInterval = ${config.server.motdInterval};
 maxPing= ${config.server.maxPing};
