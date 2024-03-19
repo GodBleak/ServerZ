@@ -21,10 +21,8 @@ docker run -d -P \
     -e "STEAM_USERNAME=your_steam_username" \
     -e "STEAM_PASSWORD=your_steam_password" \
     -e "STEAM_GUARD_CODE=your_steam_guard_code" \
-    -p 2302-2305:2302-2305/udp \
-    -p 27016:27016/udp \
-    -p 8766:8766/udp \
-    -p 2310:2310 \
+    -p 2302:2302/udp \
+    -p 2305:2305/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -47,10 +45,8 @@ services:
       STEAM_GUARD_CODE: your_steam_guard_code
       MOTD: DayZ Server in a Box # Example of setting a serverDZ.cfg variable
     ports:
-      - 2302-2305:2302-2305/udp
-      - 27016:27016/udp
-      - 8766:8766/udp
-      - 2310:2310
+      - 2302:2302/udp
+      - 2305:2305/udp
 ```
 
 ### Development
@@ -83,6 +79,13 @@ npm start
 ## Environment Variables
 See [Environment Variables](doc/environment_variables.md).
 
+## Changing the Default Ports
+By default, the server uses the following ports:
+- 2302/udp (Game Port)
+- 2305/udp (Steam Query Port)
+
+To change these ports, it's not enough to modify the port mapping in your docker configuration. You'll also need to set the `PORT` and `STEAM_QUERY_PORT` environment variables to the new port numbers.
+
 ## Installing Mods
 To install mods, set the `MOD_LIST` environment variable to a comma separated list of workshop item IDs. For example, to install CF and VPPAdminTools, you'd use the following docker run command:
 ```bash
@@ -93,10 +96,8 @@ docker run -d -P \
     -e "STEAM_PASSWORD=your_steam_password" \
     -e "STEAM_GUARD_CODE=your_steam_guard_code" \
     -e "MOD_LIST=1559212036,1828439124" \
-    -p 2302-2305:2302-2305/udp \
-    -p 27016:27016/udp \
-    -p 8766:8766/udp \
-    -p 2310:2310 \
+    -p 2302:2302/udp \
+    -p 2305:2305/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -122,10 +123,8 @@ docker run -d -P \
     -e "STEAM_PASSWORD=your_steam_password" \
     -e "STEAM_GUARD_CODE=your_steam_guard_code" \
     -e "TEMPLATE=dayzOffline.enoch" \
-    -p 2302-2305:2302-2305/udp \
-    -p 27016:27016/udp \
-    -p 8766:8766/udp \
-    -p 2310:2310 \
+    -p 2302:2302/udp \
+    -p 2305:2305/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -175,10 +174,8 @@ services:
       COPY_MISSION: true
       TEMPLATE: regular.namalsk
     ports:
-      - 2302-2305:2302-2305/udp
-      - 27016:27016/udp
-      - 8766:8766/udp
-      - 2310:2310
+      - 2302:2302/udp
+      - 2305:2305/udp
 ```
 
 To run a server on the [Banov](https://steamcommunity.com/sharedfiles/filedetails/?id=2415195639) map, downloaded from a git repository, you could use the following docker-compose file:
@@ -201,10 +198,8 @@ services:
       MISSION_PATH: /dayz/maps/Banov/empty.banov
       TEMPLATE: empty.banov
     ports:
-      - 2302-2305:2302-2305/udp
-      - 27016:27016/udp
-      - 8766:8766/udp
-      - 2310:2310
+      - 2302:2302/udp
+      - 2305:2305/udp
 ```
 
 ## Experimental
