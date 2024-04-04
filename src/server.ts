@@ -65,7 +65,7 @@ export class Server {
         if(missionExists) return;
         if(config.meta.copyMission) {
             console.log(`Copying mission from ${config.meta.missionPath} to ${missionPath}`)
-            await cp(config.meta.mapsPath, missionPath);
+            await cp(config.meta.mapsPath, missionPath, {recursive: true});
         } else {
             console.log(`Symlinking mission from ${config.meta.missionPath} to ${missionPath}`)
             await symlink(config.meta.missionPath, missionPath);
