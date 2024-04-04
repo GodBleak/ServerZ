@@ -10,5 +10,6 @@
 		"importsNotUsedAsValues": "remove",
         "outDir": "dist",
         "rootDir": "src",
+		"types": ["node"],
 	}
 }
