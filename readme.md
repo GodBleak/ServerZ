@@ -143,7 +143,14 @@ For non-official maps, you will need to tell the server how to download it. Curr
 To download a map from the workshop, you can simply add the map's workshop ID to the `MOD_LIST` environment variable.
 
 Maps downloaded from the workshop are downloaded to the same location as mods (Usually `/dayz/steamapps/workshop/content/221100`).
-> **🟠 Warning:** This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`). If persistent data is only stored within the mission directory, use `COPY_MISSION` to have the server copy the mission folder to the `mpmission` directory, rather than symlink it. If persistent data is stored anywhere else in the mod folder, it may be lost on server restart.
+
+> **🟠 Warning:** This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`). 
+> 
+>**If** the map stores persistent data within its mod folder*:
+> - and said data is stored solely within the mission directory, use `COPY_MISSION` to have the server copy the mission folder to the `mpmission` directory, rather than symlink it. 
+> - otherwise, if data is stored anywhere else in the mod folder, it may be lost on server restart.
+>
+>_\* Not enough testing/research has been conducted to determine if this is actually applicable to any map._
 
 #### Download from Git or Zip
 To download a map from a git repository or a zip file, you can set the `MAP_URL` environment variable to the URL of the repository (git repo URL should end in `.git`) or zip file.
