@@ -7,8 +7,8 @@ Note: This separation is superficial and is only used to organize the variables.
 | Variable | Default | Description |
 |---|---|---|
 | STEAM_BINARY_PATH | /usr/games/steamcmd | Path to the steamcmd binary |
-| APP_ID | 223350 | The Steam App ID for DayZ |
-| PORT | 2302 | The port the server will run on |
+| APP_ID | 223350 | The Steam App ID for DayZ Server |
+| PORT | 2302 | The (game) port the server will run on |
 | PROFILES_PATH | /profiles | The path to the profiles directory |
 | CONFIG_PATH | `${SERVER_DIRECTORY}/serverDZ.generated.cfg` | The path to the server configuration file. Changing this will result in all **Server** environment variables being ignored. |
 | CPU_COUNT | cpus().length/2 (or half of the CPUs available) | The number of cores the server will use |
@@ -35,7 +35,7 @@ Note: This separation is superficial and is only used to organize the variables.
 | UPDATE_MAP | false | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
 
 ## Server
-Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`).
+Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
 | Variable | serverDZ.cfg | Default |
 |---|---|---|
 | SERVER_NAME | hostname | Example Server |
