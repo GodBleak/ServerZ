@@ -179,6 +179,11 @@ export class Server {
             cwd: config.meta.serverDirectory,
             stdio: "inherit"
         });
+        server.on("exit", (code) => {
+            if (!config.meta.exitWithChild) return;
+            console.log(`DayZServer(${server.pid}) exited with code ${code}. Exiting...`);
+            process.exit(code === null ? -1 : code);
+        })
         console.log(`Reigns passed to DayZServer(${server.pid}). Good luck, Survivor!\n\n`);
         return server;
     }

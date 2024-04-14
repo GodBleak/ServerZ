@@ -32,6 +32,7 @@ export let config = {
         mapsPath: "maps",
         missionPath: "",
         updateMap: process.env.UPDATE_MAP?.toLowerCase() === "true",
+        exitWithChild: process.env.EXIT_WITH_CHILD?.toLowerCase() !== "false",
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",

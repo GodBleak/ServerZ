@@ -35,6 +35,7 @@ The environment variables are split into three sections: **Meta**, **Server**, a
 | COPY_MISSION | false | When set to true, will copy the mission directory (specified by MISSION_PATH) to the `mpmissions` directory, instead of symlinking it. |
 | MISSION_PATH | `${SERVER_DIRECTORY}/mpmissions/dayzOffline.chernarusplus` | The path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
 | UPDATE_MAP | false | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
+| EXIT_WITH_CHILD | true | When not set to false, the server will exit when the child process (DayZServer) exits. |
 
 ## Server
 Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
