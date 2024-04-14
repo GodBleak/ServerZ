@@ -6,7 +6,7 @@ export interface AdapterOptions {
     /**
      * The path to the steamcmd binary.
      */
-    bin: string;
+    bin: string
     /**
      * The string to look for in the output to know when a command has finished.
      * Only applicable to the Console adapter.

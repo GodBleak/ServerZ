@@ -1,41 +1,46 @@
 # Environment Variables
-The environment variables are split into two sections: **Meta** and **Server**. **Server** variables translate to configuration options found in the typical `serverDZ.cfg` file and are used to generate such a file for the server. **Meta** variables control all other aspects of the server, such as Steam configuration, server files location, startup options, etc.
 
-Note: This separation is superficial and is only used to organize the variables. When defining the environment variables this separation does not need to be taken into consideration.
+The environment variables are split into three sections: **Meta**, **Server**, and **Battle Eye**. **Server** variables translate to configuration options found in the typical `serverDZ.cfg` file and are used to generate such a file for the server. **Meta** variables control all other aspects of the server, such as Steam configuration, server files location, startup options, etc. **Battle Eye**, as the name suggests, is used to configure Battle Eye settings.
+
+> 🔵 **Note:** This separation is superficial and is only used to organize the variables. When setting environment variables this separation does not need to be taken into consideration.
+
 ## Meta
 
-| Variable | Default | Description |
-|---|---|---|
-| STEAM_BINARY_PATH | /usr/games/steamcmd | Path to the steamcmd binary |
-| APP_ID | 223350 | The Steam App ID for DayZ Server |
-| PORT | 2302 | The (game) port the server will run on |
-| PROFILES_PATH | /profiles | The path to the profiles directory |
-| CONFIG_PATH | `${SERVER_DIRECTORY}/serverDZ.generated.cfg` | The path to the server configuration file. Changing this will result in all **Server** environment variables being ignored. |
-| CPU_COUNT | cpus().length/2 (or half of the CPUs available) | The number of cores the server will use |
-| MOD_LIST | | A comma separated list of mod IDs to download and enable on the server |
-| MOD_APP_ID | 221100 | The Steam App ID the workshop items (AKA: the mods) are associated with |
-| MODS_PATH | `${SERVER_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The path to where the downloaded workshop items can be found |
-| CLEAN_MODS | false | Uninstalls and deletes all mods not found in MOD_LIST. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
-| STEAM_USERNAME | anonymous | The username for the Steam account to use for downloading the server and mods |
-| STEAM_PASSWORD | | The password for the Steam account to use for downloading the server and mods |
-| STEAM_GUARD_CODE | | The Steam Guard code for the Steam account to use for downloading the server and mods |
-| SERVER_DIRECTORY | /dayz | The directory to install the server and mods into |
-| DO_LOGS | false | adds -dologs to the server start command |
-| ADMIN_LOG | false | adds -adminlog to the server start command |
-| NET_LOG | false | adds -netlog to the server start command |
-| FREEZE_CHECK | false | adds -freezecheck to the server start command |
-| EXTRA_STARTUP_ARGS | | Any additional arguments to pass to the server start command |
-| SKIP_UPDATE | false | Skips the server update process |
-| SKIP_MOD_UPDATE | false | Skips the mod update process |
-| START_DAYZ_SERVER | true | Starts DayZServer. Set to false if you, for example, only want to update the server and mods. |
-| MAPS_PATH | `${SERVER_DIRECTORY}/maps` | The path to download maps to. |
-| MAP_URL | | The URL to download the map from. |
-| COPY_MISSION | false | When set to true, will copy the mission directory (specified by MISSION_PATH) to the `mpmissions` directory, instead of symlinking it. |
-| MISSION_PATH | `${SERVER_DIRECTORY}/mpmissions/dayzOffline.chernarusplus` | The path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
-| UPDATE_MAP | false | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
+| Variable           | Default                                                        | Description                                                                                                                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| STEAM_BINARY_PATH  | /usr/games/steamcmd                                            | Path to the steamcmd binary                                                                                                                                                                                                                                            |
+| APP_ID             | 223350                                                         | The Steam App ID for DayZ Server                                                                                                                                                                                                                                       |
+| PORT               | 2302                                                           | The (game) port the server will run on                                                                                                                                                                                                                                 |
+| PROFILES_PATH      | /profiles                                                      | The path to the profiles directory                                                                                                                                                                                                                                     |
+| CONFIG_PATH        | `${SERVER_DIRECTORY}/serverDZ.generated.cfg`                   | The path to the server configuration file. Changing this will result in all **Server** environment variables being ignored.                                                                                                                                            |
+| CPU_COUNT          | cpus().length/2 (or half of the CPUs available)                | The number of cores the server will use                                                                                                                                                                                                                                |
+| MOD_LIST           |                                                                | A comma separated list of mod IDs to download and enable on the server                                                                                                                                                                                                 |
+| MOD_APP_ID         | 221100                                                         | The Steam App ID the workshop items (AKA: the mods) are associated with                                                                                                                                                                                                |
+| MODS_PATH          | `${SERVER_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The path to where the downloaded workshop items can be found                                                                                                                                                                                                           |
+| CLEAN_MODS         | false                                                          | On start, the server will uninstall and delete all mods not found in `MOD_LIST`. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
+| STEAM_USERNAME     | anonymous                                                      | The username for the Steam account to use for downloading the server and mods                                                                                                                                                                                          |
+| STEAM_PASSWORD     |                                                                | The password for the Steam account to use for downloading the server and mods                                                                                                                                                                                          |
+| STEAM_GUARD_CODE   |                                                                | The Steam Guard code for the Steam account to use for downloading the server and mods                                                                                                                                                                                  |
+| SERVER_DIRECTORY   | /dayz                                                          | The directory to install the server and mods into                                                                                                                                                                                                                      |
+| DO_LOGS            | false                                                          | adds -dologs to the server start command                                                                                                                                                                                                                               |
+| ADMIN_LOG          | false                                                          | adds -adminlog to the server start command                                                                                                                                                                                                                             |
+| NET_LOG            | false                                                          | adds -netlog to the server start command                                                                                                                                                                                                                               |
+| FREEZE_CHECK       | false                                                          | adds -freezecheck to the server start command                                                                                                                                                                                                                          |
+| BE_PATH            | `${SERVER_DIRECTORY}/battleye`                                 | The path to the BattlEye directory                                                                                                                                                                                                                                     |
+| EXTRA_STARTUP_ARGS |                                                                | Any additional arguments to pass to the server start command                                                                                                                                                                                                           |
+| SKIP_UPDATE        | false                                                          | Skips the server update process                                                                                                                                                                                                                                        |
+| SKIP_MOD_UPDATE    | false                                                          | Skips the mod update process                                                                                                                                                                                                                                           |
+| START_DAYZ_SERVER  | true                                                           | Starts DayZServer. Set to false if you, for example, only want to update the server and mods.                                                                                                                                                                          |
+| MAPS_PATH          | `${SERVER_DIRECTORY}/maps`                                     | The path to download maps to.                                                                                                                                                                                                                                          |
+| MAP_URL            |                                                                | The URL to download the map from.                                                                                                                                                                                                                                      |
+| COPY_MISSION       | false                                                          | When set to true, will copy the mission directory (specified by MISSION_PATH) to the `mpmissions` directory, instead of symlinking it.                                                                                                                                 |
+| MISSION_PATH       | `${SERVER_DIRECTORY}/mpmissions/dayzOffline.chernarusplus`     | The path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory.                                                                           |
+| UPDATE_MAP         | false                                                          | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss.                                                                                                                                                           |
+| EXIT_WITH_CHILD    | true                                                           | When not set to false, the server will exit when the child process (DayZServer) exits.                                                                                                                                                                                 |
 
 ## Server
-Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
+
+Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the \_case* (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
 | Variable | serverDZ.cfg | Default |
 |---|---|---|
 | SERVER_NAME | hostname | Example Server |
@@ -94,3 +99,13 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | SERVER_FPS_WARNING | serverFPSWarning | 15 |
 | SHOT_VALIDATION | shotValidation | 1 |
 | TEMPLATE | `Missions.DayZ.template` | dayzOffline.chernarusplus |
+
+## BattlEye
+
+Unless any of the following variables are set, no BattlEye configuration will be generated.
+
+| Variable    | beserver_x64.cfg | Description                            |
+| ----------- | ---------------- | -------------------------------------- |
+| BE_IP       | RConIP           | The IP the BattlEye RCon will bind to  |
+| BE_PORT     | RConPort         | The port the BattlEye RCon will run on |
+| BE_PASSWORD | RConPassword     | The password for the BattlEye RCon     |

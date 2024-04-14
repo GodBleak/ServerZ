@@ -1,8 +1,8 @@
-import "dotenv/config";
-import {cpus} from "os"
+import "dotenv/config"
+import { cpus } from "os"
 
 export let config = {
-    meta:{
+    meta: {
         steamUsername: process.env.STEAM_USERNAME,
         steamPassword: process.env.STEAM_PASSWORD,
         steamGuardCode: process.env.STEAM_GUARD_CODE,
@@ -13,12 +13,16 @@ export let config = {
         port: parseInt(process.env.PORT || "2302"),
         profilesPath: process.env.PROFILES_PATH || "/profiles",
         configPath: "serverDZ.generated.cfg",
-        cpuCount: parseInt(process.env.CPU_COUNT || (cpus().length/2).toString()),
+        cpuCount: parseInt(process.env.CPU_COUNT || (cpus().length / 2).toString()),
         doLogs: process.env.DO_LOGS?.toLowerCase() === "true",
         adminLog: process.env.ADMIN_LOG?.toLowerCase() === "true",
         netLog: process.env.NET_LOG?.toLowerCase() === "true",
         freezeCheck: process.env.FREEZE_CHECK?.toLowerCase() === "true",
-        modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())).filter((mod) => !isNaN(mod)),
+        bePath: "battleye",
+        modList: (process.env.MOD_LIST || "")
+            .split(",")
+            .map((mod) => parseInt(mod.trim()))
+            .filter((mod) => !isNaN(mod)),
         modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
         modPath: "steamapps/workshop/content",
         cleanMods: process.env.CLEAN_MODS?.toLowerCase() === "true",
@@ -31,6 +35,7 @@ export let config = {
         mapsPath: "maps",
         missionPath: "",
         updateMap: process.env.UPDATE_MAP?.toLowerCase() === "true",
+        exitWithChild: process.env.EXIT_WITH_CHILD?.toLowerCase() !== "false",
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
@@ -88,12 +93,18 @@ export let config = {
         storeHouseStateDisabled: process.env.STORE_HOUSE_STATE_DISABLED?.toLowerCase() === "true",
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
-        template: process.env.TEMPLATE || "dayzOffline.chernarusplus"
-    }
+        template: process.env.TEMPLATE || "dayzOffline.chernarusplus",
+    },
+    battleye: {
+        ip: process.env.BE_IP,
+        port: process.env.BE_PORT,
+        password: process.env.BE_PASSWORD,
+    },
 }
 
-config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`;
-config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`;
-config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`;
-config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`;
-config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`;
+config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`
+config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`
+config.meta.bePath = process.env.BE_PATH || `${config.meta.serverDirectory}/${config.meta.bePath}`
+config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`
+config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`
+config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`
