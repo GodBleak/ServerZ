@@ -18,6 +18,7 @@ export let config = {
         adminLog: process.env.ADMIN_LOG?.toLowerCase() === "true",
         netLog: process.env.NET_LOG?.toLowerCase() === "true",
         freezeCheck: process.env.FREEZE_CHECK?.toLowerCase() === "true",
+        bePath: "battleye",
         modList: (process.env.MOD_LIST || "").split(",").map((mod) => parseInt(mod.trim())).filter((mod) => !isNaN(mod)),
         modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
         modPath: "steamapps/workshop/content",
@@ -89,11 +90,17 @@ export let config = {
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
         template: process.env.TEMPLATE || "dayzOffline.chernarusplus"
+    },
+    battleye: {
+        ip: process.env.BE_IP,
+        port: process.env.BE_PORT,
+        password: process.env.BE_PASSWORD
     }
 }
 
 config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`;
 config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`;
+config.meta.bePath = process.env.BE_PATH || `${config.meta.serverDirectory}/${config.meta.bePath}`;
 config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`;
 config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`;
 config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`;

@@ -7,6 +7,7 @@ import { readFile, link, symlink, cp, stat, readdir, writeFile, rm, mkdir} from 
 import { spawn } from "child_process";
 import Git from "simple-git"
 import { unzip } from 'unzipit';
+import { generateBEConfig } from "./generateBEConfig.js";
 
 export class Server {
     private modNameList:string[] = []
@@ -25,6 +26,7 @@ export class Server {
         if(config.meta.adminLog) commandComponents.push("-adminlog");
         if(config.meta.netLog) commandComponents.push("-netlog");
         if(config.meta.freezeCheck) commandComponents.push("-freezecheck");
+        if(config.meta.bePath) commandComponents.push(`"-BEpath=${config.meta.bePath}"`);
         if(config.meta.extraStartupArgs) commandComponents.push(config.meta.extraStartupArgs);
         return commandComponents.join(" ");
     }
@@ -137,6 +139,29 @@ export class Server {
         console.log("Writing serverDZ.generated.cfg")
         const configFile = generateConfig();
         await writeFile(`${config.meta.serverDirectory}/serverDZ.generated.cfg`, configFile);
+    }
+    
+    /**
+     * Generates a BattlEye configuration file based on environment variables, and writes it to the battleye directory.
+     */
+    public async writeBEConfig() {
+        const configFile = generateBEConfig();
+        if(!configFile) return;
+        console.log(`Writing ${config.meta.bePath}/beserver_x64.cfg`);
+
+        const activeConfigRegex = /beserver_x64_active_[0-9a-f]{8}\.cfg/;
+        const files = await readdir(config.meta.bePath);
+        const activeConfigFiles = files.filter((file) => activeConfigRegex.test(file));
+
+        for(const file of activeConfigFiles) {
+            try {
+                await rm(`${config.meta.bePath}/${file}`);
+            } catch(e) {
+                console.error(`Failed to remove active BE config file: ${file}`);
+            }
+        }
+
+        await writeFile(`${config.meta.bePath}/beserver_x64.cfg`, configFile);
     }
 
     /**

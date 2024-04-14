@@ -13,6 +13,7 @@ async function main() {
     if(!config.meta.skipMods) await server.updateMods();
     await server.updateMap()
     await server.writeConfig();
+    await server.writeBEConfig();
     if(config.meta.startDayZServer) server.start();
 }
 

@@ -1,7 +1,8 @@
 # Environment Variables
-The environment variables are split into two sections: **Meta** and **Server**. **Server** variables translate to configuration options found in the typical `serverDZ.cfg` file and are used to generate such a file for the server. **Meta** variables control all other aspects of the server, such as Steam configuration, server files location, startup options, etc.
+The environment variables are split into three sections: **Meta**, **Server**, and **Battle Eye**. **Server** variables translate to configuration options found in the typical `serverDZ.cfg` file and are used to generate such a file for the server. **Meta** variables control all other aspects of the server, such as Steam configuration, server files location, startup options, etc. **Battle Eye**, as the name suggests, is used to configure Battle Eye settings.
 
-Note: This separation is superficial and is only used to organize the variables. When defining the environment variables this separation does not need to be taken into consideration.
+> 🔵 **Note:** This separation is superficial and is only used to organize the variables. When setting environment variables this separation does not need to be taken into consideration.
+
 ## Meta
 
 | Variable | Default | Description |
@@ -15,7 +16,7 @@ Note: This separation is superficial and is only used to organize the variables.
 | MOD_LIST | | A comma separated list of mod IDs to download and enable on the server |
 | MOD_APP_ID | 221100 | The Steam App ID the workshop items (AKA: the mods) are associated with |
 | MODS_PATH | `${SERVER_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The path to where the downloaded workshop items can be found |
-| CLEAN_MODS | false | Uninstalls and deletes all mods not found in MOD_LIST. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
+| CLEAN_MODS | false | On start, the server will uninstall and delete all mods not found in `MOD_LIST`. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
 | STEAM_USERNAME | anonymous | The username for the Steam account to use for downloading the server and mods |
 | STEAM_PASSWORD | | The password for the Steam account to use for downloading the server and mods |
 | STEAM_GUARD_CODE | | The Steam Guard code for the Steam account to use for downloading the server and mods |
@@ -24,6 +25,7 @@ Note: This separation is superficial and is only used to organize the variables.
 | ADMIN_LOG | false | adds -adminlog to the server start command |
 | NET_LOG | false | adds -netlog to the server start command |
 | FREEZE_CHECK | false | adds -freezecheck to the server start command |
+| BE_PATH | `${SERVER_DIRECTORY}/battleye` | The path to the BattlEye directory |
 | EXTRA_STARTUP_ARGS | | Any additional arguments to pass to the server start command |
 | SKIP_UPDATE | false | Skips the server update process |
 | SKIP_MOD_UPDATE | false | Skips the mod update process |
@@ -94,3 +96,12 @@ Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase 
 | SERVER_FPS_WARNING | serverFPSWarning | 15 |
 | SHOT_VALIDATION | shotValidation | 1 |
 | TEMPLATE | `Missions.DayZ.template` | dayzOffline.chernarusplus |
+
+## BattlEye
+Unless any of the following variables are set, no BattlEye configuration will be generated.
+
+| Variable | beserver_x64.cfg | Description |
+|---|---|---|
+| BE_IP | RConIP | The IP the BattlEye RCon will bind to |
+| BE_PORT | RConPort | The port the BattlEye RCon will run on |
+| BE_PASSWORD | RConPassword | The password for the BattlEye RCon |
