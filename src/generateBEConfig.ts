@@ -1,12 +1,12 @@
-import { config } from "./config.js";
+import { config } from "./config.js"
 
 export function generateBEConfig() {
-  let file = "";
+    let file = ""
 
-  if (config.battleye.ip) file += `RConIP ${config.battleye.ip}\n`;
-  if (config.battleye.port) file += `RConPort ${config.battleye.port}\n`;
-  if (config.battleye.password)
-    file += `RConPassword ${config.battleye.password}\n`;
+    if (config.battleye.ip) file += `RConIP ${config.battleye.ip}\n`
+    if (config.battleye.port) file += `RConPort ${config.battleye.port}\n`
+    if (config.battleye.password) file += `RConPassword ${config.battleye.password}\n`
+    file += `RConPassword ${config.battleye.password}\n`
 
-  return file !== "" ? file : null;
+    return file !== "" ? file : null
 }

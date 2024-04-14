@@ -60,4 +60,5 @@ class Missions
         template="${config.server.template}";
     };
 };
-`}
+`
+}
