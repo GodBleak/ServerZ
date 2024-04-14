@@ -227,9 +227,10 @@ async function createModSymlink(id: number, name: string) {
 async function createModKeyLinks(id: number) {
     const keysPath = await getKeysPath(id);
     const keys = await readdir(keysPath);
+    
     for(const key of keys) {
         const sourcePath = `${keysPath}/${key}`;
-        const targetPath = `${config.meta.serverDirectory}/keys/${key}`;
+        const targetPath = `${config.meta.serverDirectory}/keys/${id}-${key}`;
         const targetExists = await exists(targetPath);
         if(targetExists) continue;
         await link(sourcePath, targetPath);
