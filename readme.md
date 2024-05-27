@@ -138,9 +138,11 @@ docker run -d -P \
 
 ## Using Maps
 
-### DLC (Livonia)
+By default the server will load Chernarus. However, if you'd instead like to use...
 
-To enable a DLC map, you typically only need to set the `TEMPLATE` environment variable. For example, to run a server on Livonia (Currently the only DLC map), you could use the following docker run command:
+### Livonia
+
+You only need to set the `TEMPLATE` environment variable. For example, you could use the following docker run command:
 
 ```bash
 docker run -d -P \
@@ -158,7 +160,7 @@ docker run -d -P \
 
 ### Custom Maps
 
-For non-official maps, you will need to tell the server how to download it. Currently the server can obtain it one of three ways:
+You will need to tell the server how to download it. Currently the server can obtain it one of three ways:
 
 -   From the workshop
 -   From a git repository

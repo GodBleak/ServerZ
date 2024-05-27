@@ -66,6 +66,9 @@ export class Server {
         await download(url, config.meta.mapsPath, config.meta.updateMap)
     }
 
+    /**
+     *  Copies or symlinks the mission directory to the server's mpmissions directory.
+     */
     private async updateMPMissions() {
         const missionPath = `${config.meta.serverDirectory}/mpmissions/${config.server.template}`
         const missionExists = await exists(missionPath)
