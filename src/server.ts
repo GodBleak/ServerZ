@@ -2,6 +2,7 @@ import { config } from "./config.js"
 import { generateConfig } from "./generateConfig.js"
 import { ModInstallationFeedback, ServerDownloadFeedback } from "./feedbackHandlers.js"
 import { generateBEConfig } from "./generateBEConfig.js"
+import { HealthReporter } from "./healthReporter.js"
 import type { SteamCMD } from "./lib/index.js"
 
 import { readFile, link, symlink, cp, stat, readdir, writeFile, rm, mkdir } from "fs/promises"
@@ -179,6 +180,7 @@ export class Server {
      * @returns The spawned server process.
      */
     public start() {
+        const healthReporter = new HealthReporter(1000 * 10)
         const command = this.getStartCommand()
         console.log(`Starting server with command: ${command}\n\n`)
         const server = spawn(command, {
@@ -187,12 +189,25 @@ export class Server {
             cwd: config.meta.serverDirectory,
             stdio: "inherit",
         })
+
+        server.on("spawn", () => {
+            healthReporter.start()
+            console.log(`Reigns passed to DayZServer(${server.pid}). Good luck, Survivor!\n\n`)
+        })
+
         server.on("exit", (code) => {
+            healthReporter.stop()
             if (!config.meta.exitWithChild) return
             console.log(`DayZServer(${server.pid}) exited with code ${code}. Exiting...`)
             process.exit(code === null ? -1 : code)
         })
-        console.log(`Reigns passed to DayZServer(${server.pid}). Good luck, Survivor!\n\n`)
+
+        server.on("error", (error) => {
+            healthReporter.stop()
+            if (!config.meta.exitWithChild) return
+            console.log(`DayZServer(${server.pid}) exited with error ${error}. Exiting...`)
+            process.exit(1)
+        })
         return server
     }
 }

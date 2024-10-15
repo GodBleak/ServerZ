@@ -39,8 +39,10 @@ RUN groupadd ctrusr && \
 USER ctrusr
 WORKDIR /serverz
 
-COPY --chown=ctrusr:ctrusr package.json package-lock.json ./
+COPY --chown=ctrusr:ctrusr package.json package-lock.json healthcheck.sh ./
 COPY --chown=ctrusr:ctrusr dist/ dist/
+
+RUN chmod +x healthcheck.sh
 
 EXPOSE 2302/udp
 EXPOSE 2303/udp
@@ -51,5 +53,7 @@ EXPOSE 27016/udp
 EXPOSE 2310
 
 RUN npm install
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 CMD [ "/serverz/healthcheck.sh" ]
 
 CMD ["node", "dist/index.js"]
