@@ -138,6 +138,23 @@ docker run -d -P \
 
 By default the server will load Chernarus. However, if you'd instead like to use...
 
+### DLC (Frostline)
+To enable a DLC map, you typically only need to set the TEMPLATE environment variable. For example, to run a server on Frostline (Currently the only DLC map), you could use the following docker run command:
+
+```bash
+docker run -d -P \
+    -v "/path/to/persistent/dayz/directory:/dayz" \
+    -v "/path/to/persistent/profiles/directory:/profiles" \
+    -e "STEAM_USERNAME=your_steam_username" \
+    -e "STEAM_PASSWORD=your_steam_password" \
+    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
+    -e "TEMPLATE=dayzOffline.sakhal" \
+    -p 2302:2302/udp \
+    -p 2305:2305/udp \
+    --restart unless-stopped \
+    registry.godbleak.dev/godbleak/serverz:latest
+```
+
 ### Livonia
 
 You only need to set the `TEMPLATE` environment variable. For example, you could use the following docker run command:
