@@ -2,6 +2,7 @@ import { config } from "./config.js"
 
 export function generateConfig() {
     return `hostname = "${config.server.serverName}";
+description = ${config.server.description};
 password = "${config.server.password}";
 passwordAdmin = "${config.server.adminPassword}";
 maxPlayers = ${config.server.maxPlayers};
@@ -43,6 +44,14 @@ networkRangeClose = ${config.server.networkRangeClose};
 networkRangeNear = ${config.server.networkRangeNear};
 networkRangeFar = ${config.server.networkRangeFar};
 networkRangeDistantEffect = ${config.server.networkRangeDistantEffect};
+networkObjectBatchLogSlow = ${config.server.networkObjectBatchLogSlow};
+networkObjectBatchEnforceBandwidthLimits = ${config.server.networkObjectBatchEnforceBandwidthLimits};
+networkObjectBatchUseEstimatedBandwidth = ${config.server.networkObjectBatchUseEstimatedBandwidth};
+networkObjectBatchUseDynamicMaximumBandwidth = ${config.server.networkObjectBatchUseDynamicMaximumBandwidth};
+networkObjectBatchBandwidthLimit = ${config.server.networkObjectBatchBandwidthLimit};
+networkObjectBatchCompute = ${config.server.networkObjectBatchCompute};
+networkObjectBatchSendCreate = ${config.server.networkObjectBatchSendCreate};
+networkObjectBatchSendDelete = ${config.server.networkObjectBatchSendDelete};
 defaultVisibility = ${config.server.defaultVisibility};
 defaultObjectViewDistance = ${config.server.defaultObjectViewDistance};
 lightingConfig = ${config.server.lightingConfig};
@@ -50,8 +59,13 @@ disablePersonalLight = ${config.server.disablePersonalLight};
 disableBaseDamage = ${config.server.disableBaseDamage};
 disableContainerDamage = ${config.server.disableContainerDamage};
 disableRespawnDialog = ${config.server.disableRespawnDialog};
-lootHistory = ${config.server.lootHistory};
-storeHouseStateDisabled = ${config.server.storeHouseStateDisabled};
+pingWarning = ${config.server.pingWarning};
+pingCritical = ${config.server.pingCritical};
+MaxPing = ${config.server.maxPing};
+maxPing = ${config.server.maxPing};
+serverFPSWarning = ${config.server.serverFpsWarning};
+shotValidation = ${config.server.shotValidation};
+clientPort = ${config.server.clientPort};
 
 class Missions
 {

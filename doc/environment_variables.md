@@ -68,7 +68,7 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 | RESPAWN_TIME | respawnTime | 0 |
 | PING_WARNING | pingWarning | 200 |
 | PING_CRITICAL | pingCritical | 250 |
-| MAX_PING | maxPing | 300 |
+| MAX_PING | MaxPing | 300 |
 | TIMESTAMP_FORMAT | timeStampFormat | Short |
 | LOG_AVERAGE_FPS | logAverageFPS | 3600 |
 | LOG_MEMORY | logMemory | 3600 |
@@ -87,6 +87,14 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 | NETWORK_RANGE_NEAR | networkRangeNear | 150 |
 | NETWORK_RANGE_FAR | networkRangeFar | 1000 |
 | NETWORK_RANGE_DISTANT_EFFECT | networkRangeDistantEffect | 4000 |
+| NETWORK_OBJECT_BATCH_LOG_SLOW | networkObjectBatchLogSlow | 5 |
+| NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS | networkObjectBatchEnforceBandwidthLimits | 1 |
+| NETWORK_OBJECT_BATCH_USE_ESTIMATED_BANDWIDTH | networkObjectBatchUseEstimatedBandwidth | 0 |
+| NETWORK_OBJECT_BATCH_USE_DYNAMIC_MAXIMUM_BANDWIDTH | networkObjectBatchUseDynamicMaximumBandwidth | 1 |
+| NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT | networkObjectBatchBandwidthLimit | 0.8 |
+| NETWORK_OBJECT_BATCH_COMPUTE | networkObjectBatchCompute | 1000 |
+| NETWORK_OBJECT_BATCH_SEND_CREATE | networkObjectBatchSendCreate | 10 |
+| NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT | networkObjectBatchSendDelete | 10 |
 | DEFAULT_VISIBILITY | defaultVisibility | 1375 |
 | DEFAULT_OBJECT_VIEW_DISTANCE | defaultObjectViewDistance | 1375 |
 | LIGHTING_CONFIG | lightingConfig | 1 |
@@ -94,8 +102,6 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 | DISABLE_BASE_DAMAGE | disableBaseDamage | 0 |
 | DISABLE_CONTAINER_DAMAGE | disableContainerDamage | 0 |
 | DISABLE_RESPAWN_DIALOG | disableRespawnDialog | 0 |
-| LOOT_HISTORY | lootHistory | 1 |
-| STORE_HOUSE_STATE_DISABLED | storeHouseStateDisabled | false |
 | SERVER_FPS_WARNING | serverFPSWarning | 15 |
 | SHOT_VALIDATION | shotValidation | 1 |
 | TEMPLATE | `Missions.DayZ.template` | dayzOffline.chernarusplus |
