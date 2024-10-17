@@ -45,6 +45,7 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 |---|---|---|
 | SERVER_NAME | hostname | Example Server |
 | PASSWORD | password | |
+| DESCRIPTION | description | |
 | ADMIN_PASSWORD | passwordAdmin | |
 | MAX_PLAYERS | maxPlayers | 60 |
 | VERIFY_SIGNATURES | verifySignatures | 2 |

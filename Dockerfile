@@ -31,16 +31,12 @@ RUN wget -O- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | b
 
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN groupadd ctrusr && \
-    useradd -l -g ctrusr ctrusr && \
-    mkdir -p /home/ctrusr /dayz /serverz /profiles && \
-    chown -R ctrusr:ctrusr /home/ctrusr /dayz /serverz /profiles
+RUN mkdir -p /home/ctrusr /dayz /serverz /profiles
 
-USER ctrusr
 WORKDIR /serverz
 
-COPY --chown=ctrusr:ctrusr package.json package-lock.json healthcheck.sh ./
-COPY --chown=ctrusr:ctrusr dist/ dist/
+COPY package.json package-lock.json healthcheck.sh ./
+COPY dist/ dist/
 
 RUN chmod +x healthcheck.sh
 
