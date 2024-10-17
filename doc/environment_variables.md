@@ -40,7 +40,7 @@ The environment variables are split into three sections: **Meta**, **Server**, a
 
 ## Server
 
-Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the \_case* (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
+Most of the server env. variables are the UPPER_SNAKE_CASE version of camelCase configuration options found in the `serverDZ.cfg`/`server.cfg` file. However, this is **not** always the _case_ (e.g. `SERVER_NAME`, `ADMIN_PASSWORD`). For more information on what each variable does, refer to the [official DayZ configuration documentation](https://community.bistudio.com/wiki/DayZ:Server_Configuration#Configuration).
 | Variable | serverDZ.cfg | Default |
 |---|---|---|
 | SERVER_NAME | hostname | Example Server |
