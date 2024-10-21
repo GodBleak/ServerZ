@@ -95,7 +95,7 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 | NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT | networkObjectBatchBandwidthLimit | 0.8 |
 | NETWORK_OBJECT_BATCH_COMPUTE | networkObjectBatchCompute | 1000 |
 | NETWORK_OBJECT_BATCH_SEND_CREATE | networkObjectBatchSendCreate | 10 |
-| NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT | networkObjectBatchSendDelete | 10 |
+| NETWORK_OBJECT_BATCH_SEND_DELETE | networkObjectBatchSendDelete | 10 |
 | DEFAULT_VISIBILITY | defaultVisibility | 1375 |
 | DEFAULT_OBJECT_VIEW_DISTANCE | defaultObjectViewDistance | 1375 |
 | LIGHTING_CONFIG | lightingConfig | 1 |
