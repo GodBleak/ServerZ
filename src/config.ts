@@ -102,6 +102,7 @@ export let config = {
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
         clientPort: parseInt(process.env.CLIENT_PORT || "2304"),
+        enableCfgGameplayFile: parseInt(process.env.ENABLE_CFG_GAMEPLAY_FILE || "0"),
         template: process.env.TEMPLATE || "dayzOffline.chernarusplus",
     },
     battleye: {

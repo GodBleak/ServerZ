@@ -105,6 +105,7 @@ Most of the server env. variables are the UPPER*SNAKE_CASE version of camelCase 
 | DISABLE_RESPAWN_DIALOG | disableRespawnDialog | 0 |
 | SERVER_FPS_WARNING | serverFPSWarning | 15 |
 | SHOT_VALIDATION | shotValidation | 1 |
+| ENABLE_CFG_GAMEPLAY_FILE | enableCfgGameplayFile | 0 |
 | TEMPLATE | `Missions.DayZ.template` | dayzOffline.chernarusplus |
 
 ## BattlEye

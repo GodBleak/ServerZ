@@ -64,6 +64,7 @@ pingCritical = ${config.server.pingCritical};
 serverFPSWarning = ${config.server.serverFpsWarning};
 shotValidation = ${config.server.shotValidation};
 clientPort = ${config.server.clientPort};
+enableCfgGameplayFile = ${config.server.enableCfgGameplayFile};
 
 class Missions
 {
