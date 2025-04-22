@@ -40,7 +40,7 @@ export let config = {
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
-        description: process.env.DESCRIPTION,
+        description: process.env.DESCRIPTION || "",
         password: process.env.PASSWORD || "",
         adminPassword: process.env.ADMIN_PASSWORD || "",
         maxPlayers: parseInt(process.env.MAX_PLAYERS || "60"),
