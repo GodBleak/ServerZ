@@ -112,10 +112,14 @@ export class Server {
         if (!config.meta.modList.length) return console.log("No mods to install")
         const modFeedback = new ModInstallationFeedback()
         if (config.meta.serverDirectory) this.steamCMD.forceDir(config.meta.serverDirectory)
-        this.steamCMD.login()
+
+        if (this.steamCMD.loggedIn) this.steamCMD.login()
+        else this.steamCMD.login(config.meta.steamUsername, config.meta.steamPassword, config.meta.steamGuardCode)
+
         for (const mod of config.meta.modList) {
             this.steamCMD.workshopDownload(config.meta.modAppID, mod)
         }
+
         const result = await this.steamCMD.execute((data) => {
             modFeedback.update(data)
         })

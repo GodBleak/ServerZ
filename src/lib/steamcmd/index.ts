@@ -28,6 +28,8 @@ export class SteamCMD {
     private adapter: SteamCMDAdapter
     private credentials: { username: string; password?: string; code?: string }
     private commands: string[] = []
+    public loggedIn: boolean = false
+
     constructor(adapter: SteamCMDAdapter) {
         this.adapter = adapter
         this.credentials = { username: "anonymous" }
@@ -87,6 +89,7 @@ export class SteamCMD {
 
     public async execute(callback?: (data: { [command: string]: string[] }) => void): Promise<string[]> {
         const response = await this.adapter.processCommands(this.commands, callback)
+        if (this.commands.includes("login") && this.credentials.username !== "anonymous") this.loggedIn = true
         this.commands = []
         return response
     }
