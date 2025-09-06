@@ -2,7 +2,7 @@ import { config } from "./config.js"
 
 export function generateConfig() {
     return `hostname = "${config.server.serverName}";
-description = ${config.server.description};
+description = "${config.server.description}";
 password = "${config.server.password}";
 passwordAdmin = "${config.server.adminPassword}";
 maxPlayers = ${config.server.maxPlayers};
@@ -64,6 +64,7 @@ pingCritical = ${config.server.pingCritical};
 serverFPSWarning = ${config.server.serverFpsWarning};
 shotValidation = ${config.server.shotValidation};
 clientPort = ${config.server.clientPort};
+enableCfgGameplayFile = ${config.server.enableCfgGameplayFile};
 
 class Missions
 {

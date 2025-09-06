@@ -40,7 +40,7 @@ export let config = {
     },
     server: {
         serverName: process.env.SERVER_NAME || "Example Server",
-        description: process.env.DESCRIPTION,
+        description: process.env.DESCRIPTION || "",
         password: process.env.PASSWORD || "",
         adminPassword: process.env.ADMIN_PASSWORD || "",
         maxPlayers: parseInt(process.env.MAX_PLAYERS || "60"),
@@ -85,7 +85,7 @@ export let config = {
         networkRangeFar: parseInt(process.env.NETWORK_RANGE_FAR || "1000"),
         networkRangeDistantEffect: parseInt(process.env.NETWORK_RANGE_DISTANT_EFFECT || "4000"),
         networkObjectBatchLogSlow: parseInt(process.env.NETWORK_OBJECT_BATCH_LOG_SLOW || "5"),
-        networkObjectBatchEnforceBandwidthLimits: parseInt(process.env.NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS || "1"),
+        networkObjectBatchEnforceBandwidthLimits: parseFloat(process.env.NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS || "1"),
         networkObjectBatchUseEstimatedBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_ESTIMATED_BANDWIDTH || "0"),
         networkObjectBatchUseDynamicMaximumBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_DYNAMIC_MAXIMUM_BANDWIDTH || "1"),
         networkObjectBatchBandwidthLimit: parseInt(process.env.NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT || "0.8"),
@@ -102,6 +102,7 @@ export let config = {
         serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
         shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
         clientPort: parseInt(process.env.CLIENT_PORT || "2304"),
+        enableCfgGameplayFile: parseInt(process.env.ENABLE_CFG_GAMEPLAY_FILE || "0"),
         template: process.env.TEMPLATE || "dayzOffline.chernarusplus",
     },
     battleye: {
