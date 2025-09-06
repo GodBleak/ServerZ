@@ -2,7 +2,7 @@ import { config } from "./config.js"
 
 export function generateConfig() {
     return `hostname = "${config.server.serverName}";
-description = ${config.server.description};
+description = "${config.server.description}";
 password = "${config.server.password}";
 passwordAdmin = "${config.server.adminPassword}";
 maxPlayers = ${config.server.maxPlayers};
