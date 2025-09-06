@@ -85,7 +85,7 @@ export let config = {
         networkRangeFar: parseInt(process.env.NETWORK_RANGE_FAR || "1000"),
         networkRangeDistantEffect: parseInt(process.env.NETWORK_RANGE_DISTANT_EFFECT || "4000"),
         networkObjectBatchLogSlow: parseInt(process.env.NETWORK_OBJECT_BATCH_LOG_SLOW || "5"),
-        networkObjectBatchEnforceBandwidthLimits: parseInt(process.env.NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS || "1"),
+        networkObjectBatchEnforceBandwidthLimits: parseFloat(process.env.NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS || "1"),
         networkObjectBatchUseEstimatedBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_ESTIMATED_BANDWIDTH || "0"),
         networkObjectBatchUseDynamicMaximumBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_DYNAMIC_MAXIMUM_BANDWIDTH || "1"),
         networkObjectBatchBandwidthLimit: parseInt(process.env.NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT || "0.8"),
