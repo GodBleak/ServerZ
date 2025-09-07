@@ -1,0 +1,126 @@
+{
+    "port": { "__name": "API_PORT", "__format": "number" },
+    "host": "HOSTNAME",
+
+    "serverz": {
+        "meta": {
+            "steamUsername": "STEAM_USERNAME",
+            "steamPassword": "STEAM_PASSWORD",
+            "steamGuardCode": "STEAM_GUARD_CODE",
+
+            "appID": { "__name": "APP_ID", "__format": "number" },
+            "steamBinaryPath": "STEAM_BINARY_PATH",
+            "dayZBinaryPath": "DAYZ_BINARY_PATH",
+            "serverDirectory": "SERVER_DIRECTORY",
+            "port": { "__name": "PORT", "__format": "number" },
+            "profilesPath": "PROFILES_PATH",
+            "configPath": "CONFIG_PATH",
+            "cpuCount": { "__name": "CPU_COUNT", "__format": "number" },
+
+            "doLogs": { "__name": "DO_LOGS", "__format": "boolean" },
+            "adminLog": { "__name": "ADMIN_LOG", "__format": "boolean" },
+            "netLog": { "__name": "NET_LOG", "__format": "boolean" },
+            "freezeCheck": { "__name": "FREEZE_CHECK", "__format": "boolean" },
+
+            "bePath": "BE_PATH",
+            "modList": "MOD_LIST",
+            "modAppID": { "__name": "MOD_APP_ID", "__format": "number" },
+            "modPath": "MOD_PATH",
+            "cleanMods": { "__name": "CLEAN_MODS", "__format": "boolean" },
+            "extraStartupArgs": "EXTRA_STARTUP_ARGS",
+
+            "skipUpdate": { "__name": "SKIP_UPDATE", "__format": "boolean" },
+            "skipMods": { "__name": "SKIP_MOD_UPDATE", "__format": "boolean" },
+            "skipMap": { "__name": "SKIP_MAP_UPDATE", "__format": "boolean" },
+            "startDayZServer": { "__name": "START_DAYZ_SERVER", "__format": "boolean" },
+
+            "mapURL": "MAP_URL",
+            "copyMission": { "__name": "COPY_MISSION", "__format": "boolean" },
+            "mapsPath": "MAPS_PATH",
+            "missionPath": "MISSION_PATH",
+            "updateMap": { "__name": "UPDATE_MAP", "__format": "boolean" },
+            "exitWithChild": { "__name": "EXIT_WITH_CHILD", "__format": "boolean" }
+        },
+
+        "server": {
+            "serverName": "SERVER_NAME",
+            "description": "DESCRIPTION",
+            "password": "PASSWORD",
+            "adminPassword": "ADMIN_PASSWORD",
+            "maxPlayers": { "__name": "MAX_PLAYERS", "__format": "number" },
+
+            "verifySignatures": { "__name": "VERIFY_SIGNATURES", "__format": "number" },
+            "forceSameBuild": { "__name": "FORCE_SAME_BUILD", "__format": "number" },
+            "disableVon": { "__name": "DISABLE_VON", "__format": "number" },
+            "vonCodecQuality": { "__name": "VON_CODEC_QUALITY", "__format": "number" },
+            "disable3rdPerson": { "__name": "DISABLE_3RD_PERSON", "__format": "number" },
+            "disableCrosshair": { "__name": "DISABLE_CROSSHAIR", "__format": "number" },
+
+            "serverTime": "SERVER_TIME",
+            "serverTimeAcceleration": { "__name": "SERVER_TIME_ACCELERATION", "__format": "number" },
+            "serverNightTimeAcceleration": { "__name": "SERVER_NIGHT_TIME_ACCELERATION", "__format": "number" },
+            "serverTimePersistent": { "__name": "SERVER_TIME_PERSISTENT", "__format": "number" },
+            "guaranteedUpdates": { "__name": "GUARANTEED_UPDATES", "__format": "number" },
+
+            "loginQueueConcurrentPlayers": { "__name": "LOGIN_QUEUE_CONCURRENT_PLAYERS", "__format": "number" },
+            "loginQueueMaxPlayers": { "__name": "LOGIN_QUEUE_MAX_PLAYERS", "__format": "number" },
+            "instanceID": { "__name": "INSTANCE_ID", "__format": "number" },
+            "storageAutoFix": { "__name": "STORAGE_AUTO_FIX", "__format": "number" },
+
+            "motd": "MOTD",
+            "motdInterval": { "__name": "MOTD_INTERVAL", "__format": "number" },
+            "steamQueryPort": { "__name": "STEAM_QUERY_PORT", "__format": "number" },
+            "respawnTime": { "__name": "RESPAWN_TIME", "__format": "number" },
+            "pingWarning": { "__name": "PING_WARNING", "__format": "number" },
+            "pingCritical": { "__name": "PING_CRITICAL", "__format": "number" },
+            "maxPing": { "__name": "MAX_PING", "__format": "number" },
+            "timestampFormat": "TIMESTAMP_FORMAT",
+            "logAverageFPS": { "__name": "LOG_AVERAGE_FPS", "__format": "number" },
+            "logMemory": { "__name": "LOG_MEMORY", "__format": "number" },
+            "logPlayers": { "__name": "LOG_PLAYERS", "__format": "number" },
+            "logFile": "LOG_FILE",
+
+            "adminLogPlayerHitsOnly": { "__name": "ADMIN_LOG_PLAYER_HITS_ONLY", "__format": "number" },
+            "adminLogPlacement": { "__name": "ADMIN_LOG_PLACEMENT", "__format": "number" },
+            "adminLogBuildActions": { "__name": "ADMIN_LOG_BUILD_ACTIONS", "__format": "number" },
+            "adminLogPlayerList": { "__name": "ADMIN_LOG_PLAYER_LIST", "__format": "number" },
+            "enableDebugMonitor": { "__name": "ENABLE_DEBUG_MONITOR", "__format": "number" },
+            "allowFilePatching": { "__name": "ALLOW_FILE_PATCHING", "__format": "number" },
+            "simulatedPlayersBatch": { "__name": "SIMULATED_PLAYERS_BATCH", "__format": "number" },
+            "multithreadedReplication": { "__name": "MULTITHREADED_REPLICATION", "__format": "number" },
+            "speedhackDetection": { "__name": "SPEEDHACK_DETECTION", "__format": "number" },
+
+            "networkRangeClose": { "__name": "NETWORK_RANGE_CLOSE", "__format": "number" },
+            "networkRangeNear": { "__name": "NETWORK_RANGE_NEAR", "__format": "number" },
+            "networkRangeFar": { "__name": "NETWORK_RANGE_FAR", "__format": "number" },
+            "networkRangeDistantEffect": { "__name": "NETWORK_RANGE_DISTANT_EFFECT", "__format": "number" },
+            "networkObjectBatchLogSlow": { "__name": "NETWORK_OBJECT_BATCH_LOG_SLOW", "__format": "number" },
+            "networkObjectBatchEnforceBandwidthLimits": { "__name": "NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS", "__format": "number" },
+            "networkObjectBatchUseEstimatedBandwidth": { "__name": "NETWORK_OBJECT_BATCH_USE_ESTIMATED_BANDWIDTH", "__format": "number" },
+            "networkObjectBatchUseDynamicMaximumBandwidth": { "__name": "NETWORK_OBJECT_BATCH_USE_DYNAMIC_MAXIMUM_BANDWIDTH", "__format": "number" },
+            "networkObjectBatchBandwidthLimit": { "__name": "NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT", "__format": "number" },
+            "networkObjectBatchCompute": { "__name": "NETWORK_OBJECT_BATCH_COMPUTE", "__format": "number" },
+            "networkObjectBatchSendCreate": { "__name": "NETWORK_OBJECT_BATCH_SEND_CREATE", "__format": "number" },
+            "networkObjectBatchSendDelete": { "__name": "NETWORK_OBJECT_BATCH_SEND_DELETE", "__format": "number" },
+
+            "defaultVisibility": { "__name": "DEFAULT_VISIBILITY", "__format": "number" },
+            "defaultObjectViewDistance": { "__name": "DEFAULT_OBJECT_VIEW_DISTANCE", "__format": "number" },
+            "lightingConfig": { "__name": "LIGHTING_CONFIG", "__format": "number" },
+            "disablePersonalLight": { "__name": "DISABLE_PERSONAL_LIGHT", "__format": "number" },
+            "disableBaseDamage": { "__name": "DISABLE_BASE_DAMAGE", "__format": "number" },
+            "disableContainerDamage": { "__name": "DISABLE_CONTAINER_DAMAGE", "__format": "number" },
+            "disableRespawnDialog": { "__name": "DISABLE_RESPAWN_DIALOG", "__format": "number" },
+            "serverFpsWarning": { "__name": "SERVER_FPS_WARNING", "__format": "number" },
+            "shotValidation": { "__name": "SHOT_VALIDATION", "__format": "number" },
+            "clientPort": { "__name": "CLIENT_PORT", "__format": "number" },
+            "enableCfgGameplayFile": { "__name": "ENABLE_CFG_GAMEPLAY_FILE", "__format": "number" },
+            "template": "TEMPLATE"
+        },
+
+        "battleye": {
+            "ip": "BE_IP",
+            "port": "BE_PORT",
+            "password": "BE_PASSWORD"
+        }
+    }
+}

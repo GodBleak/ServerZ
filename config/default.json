@@ -1,0 +1,126 @@
+{
+    "port": 3030,
+    "host": "0.0.0.0",
+
+    "serverz": {
+        "meta": {
+            "steamUsername": "",
+            "steamPassword": "",
+            "steamGuardCode": null,
+
+            "appID": 223350,
+            "steamBinaryPath": "/usr/games/steamcmd",
+            "dayZBinaryPath": "DayZServer",
+            "serverDirectory": "/dayz",
+            "port": 2302,
+            "profilesPath": "/profiles",
+            "configPath": "serverDZ.generated.cfg",
+            "cpuCount": null,
+
+            "doLogs": false,
+            "adminLog": false,
+            "netLog": false,
+            "freezeCheck": false,
+
+            "bePath": "battleye",
+            "modList": "",
+            "modAppID": 221100,
+            "modPath": "steamapps/workshop/content",
+            "cleanMods": false,
+            "extraStartupArgs": null,
+
+            "skipUpdate": false,
+            "skipMods": false,
+            "skipMap": false,
+            "startDayZServer": true,
+
+            "mapURL": "",
+            "copyMission": false,
+            "mapsPath": "maps",
+            "missionPath": "",
+            "updateMap": false,
+            "exitWithChild": true
+        },
+
+        "server": {
+            "serverName": "Example Server",
+            "description": "",
+            "password": "",
+            "adminPassword": "",
+            "maxPlayers": 60,
+
+            "verifySignatures": 2,
+            "forceSameBuild": 0,
+            "disableVon": 0,
+            "vonCodecQuality": 30,
+            "disable3rdPerson": 0,
+            "disableCrosshair": 1,
+
+            "serverTime": "SystemTime",
+            "serverTimeAcceleration": 3,
+            "serverNightTimeAcceleration": 4,
+            "serverTimePersistent": 1,
+            "guaranteedUpdates": 1,
+
+            "loginQueueConcurrentPlayers": 5,
+            "loginQueueMaxPlayers": 500,
+            "instanceID": 1,
+            "storageAutoFix": 1,
+
+            "motd": "DayZ in a Box!",
+            "motdInterval": 300,
+            "steamQueryPort": 2305,
+            "respawnTime": 0,
+            "pingWarning": 200,
+            "pingCritical": 250,
+            "maxPing": 300,
+            "timestampFormat": "Short",
+            "logAverageFPS": 3600,
+            "logMemory": 3600,
+            "logPlayers": 3600,
+            "logFile": "server_console.log",
+
+            "adminLogPlayerHitsOnly": 0,
+            "adminLogPlacement": 0,
+            "adminLogBuildActions": 0,
+            "adminLogPlayerList": 0,
+            "enableDebugMonitor": 0,
+            "allowFilePatching": 1,
+            "simulatedPlayersBatch": 20,
+            "multithreadedReplication": 1,
+            "speedhackDetection": 1,
+
+            "networkRangeClose": 20,
+            "networkRangeNear": 150,
+            "networkRangeFar": 1000,
+            "networkRangeDistantEffect": 4000,
+            "networkObjectBatchLogSlow": 5,
+            "networkObjectBatchEnforceBandwidthLimits": 1,
+            "networkObjectBatchUseEstimatedBandwidth": 0,
+            "networkObjectBatchUseDynamicMaximumBandwidth": 1,
+            "networkObjectBatchBandwidthLimit": 0.8,
+            "networkObjectBatchCompute": 1000,
+            "networkObjectBatchSendCreate": 10,
+            "networkObjectBatchSendDelete": 10,
+
+            "defaultVisibility": 1375,
+            "defaultObjectViewDistance": 1375,
+            "lightingConfig": 1,
+            "disablePersonalLight": 1,
+            "disableBaseDamage": 0,
+            "disableContainerDamage": 0,
+            "disableRespawnDialog": 0,
+            "serverFpsWarning": 15,
+            "shotValidation": 1,
+            "clientPort": 2304,
+            "enableCfgGameplayFile": 0,
+            "template": "dayzOffline.chernarusplus"
+        },
+
+        "battleye": {
+            "ip": null,
+            "port": null,
+            "password": null
+        }
+    }
+}
