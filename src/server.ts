@@ -7,7 +7,7 @@ import type { SteamCMD } from "./lib/index.js"
 
 import { readFile, link, symlink, cp, stat, readdir, writeFile, rm, mkdir } from "fs/promises"
 import { spawn } from "child_process"
-import Git from "simple-git"
+import { gitP } from "simple-git"
 import { unzip } from "unzipit"
 
 export class Server {
@@ -249,8 +249,7 @@ async function createModSymlink(id: number, name: string) {
     const sourcePath = `${config.meta.modPath}/${id}`
     const targetPath = `${config.meta.serverDirectory}/@${name}`
     const targetExists = await exists(targetPath)
-    if (targetExists) return
-    await symlink(sourcePath, targetPath)
+    if (!targetExists) await symlink(sourcePath, targetPath)
 }
 
 /**
@@ -281,7 +280,7 @@ async function createModKeyLinks(id: number) {
 async function getKeysPath(id: number) {
     // Some mods use "keys" and others use "Keys" 🤬
     const modDir = await readdir(`${config.meta.modPath}/${id}`)
-    let keysDir = modDir.find((dir) => dir === "keys")
+    let keysDir: "keys" | "Keys" | undefined = modDir.find((dir) => dir === "keys")
     if (!keysDir) keysDir = modDir.find((dir) => dir === "Keys")
     if (!keysDir) throw new Error(`Could not find keys directory for mod ${id}`)
     return `${config.meta.modPath}/${id}/${keysDir}`
@@ -318,12 +317,12 @@ async function getWithGit(from: string, to: string, update: boolean) {
     const targetDirExists = await exists(targetDir)
     if (targetDirExists) {
         if (!update) return
-        const git = Git({
+        const git = gitP({
             baseDir: targetDir,
         })
         return await git.pull()
     } else {
-        const git = Git({
+        const git = gitP({
             baseDir: to,
         })
         return await git.clone(from)

@@ -1,120 +1,196 @@
 import "dotenv/config"
 import { cpus } from "os"
+import Ajv from "ajv"
+import addFormats from "ajv-formats"
+import { Type, Static } from "@sinclair/typebox"
+import nodeConfig from "config"
+import defaultConfigJson from "../config/default.json" with { "type": "json" }
 
-export let config = {
-    meta: {
-        steamUsername: process.env.STEAM_USERNAME,
-        steamPassword: process.env.STEAM_PASSWORD,
-        steamGuardCode: process.env.STEAM_GUARD_CODE,
-        appID: parseInt(process.env.APP_ID || "223350"),
-        steamBinaryPath: process.env.STEAM_BINARY_PATH || "/usr/games/steamcmd",
-        dayZBinaryPath: "DayZServer",
-        serverDirectory: process.env.SERVER_DIRECTORY || "/dayz",
-        port: parseInt(process.env.PORT || "2302"),
-        profilesPath: process.env.PROFILES_PATH || "/profiles",
-        configPath: "serverDZ.generated.cfg",
-        cpuCount: parseInt(process.env.CPU_COUNT || (cpus().length / 2).toString()),
-        doLogs: process.env.DO_LOGS?.toLowerCase() === "true",
-        adminLog: process.env.ADMIN_LOG?.toLowerCase() === "true",
-        netLog: process.env.NET_LOG?.toLowerCase() === "true",
-        freezeCheck: process.env.FREEZE_CHECK?.toLowerCase() === "true",
-        bePath: "battleye",
-        modList: (process.env.MOD_LIST || "")
-            .split(",")
-            .map((mod) => parseInt(mod.trim()))
-            .filter((mod) => !isNaN(mod)),
-        modAppID: parseInt(process.env.MOD_APP_ID || "221100"),
-        modPath: "steamapps/workshop/content",
-        cleanMods: process.env.CLEAN_MODS?.toLowerCase() === "true",
-        extraStartupArgs: process.env.EXTRA_STARTUP_ARGS,
-        skipUpdate: process.env.SKIP_UPDATE?.toLowerCase() === "true",
-        skipMods: process.env.SKIP_MOD_UPDATE?.toLowerCase() === "true",
-        skipMap: process.env.SKIP_MAP_UPDATE?.toLowerCase() === "true",
-        startDayZServer: process.env.START_DAYZ_SERVER?.toLowerCase() !== "false",
-        mapURL: process.env.MAP_URL || "",
-        copyMission: process.env.COPY_MISSION?.toLowerCase() === "true",
-        mapsPath: "maps",
-        missionPath: "",
-        updateMap: process.env.UPDATE_MAP?.toLowerCase() === "true",
-        exitWithChild: process.env.EXIT_WITH_CHILD?.toLowerCase() !== "false",
+const { serverz: defaultConfig } = defaultConfigJson
+
+export const ServerZSchema = Type.Object(
+    {
+        meta: Type.Object({
+            steamUsername: Type.String(),
+            steamPassword: Type.String(),
+            steamGuardCode: Type.Optional(Type.String()),
+
+            appID: Type.Number(),
+            steamBinaryPath: Type.String(),
+            dayZBinaryPath: Type.String(),
+            serverDirectory: Type.String(),
+            port: Type.Number(),
+            profilesPath: Type.String(),
+            configPath: Type.String(),
+            cpuCount: Type.Number(),
+
+            doLogs: Type.Boolean(),
+            adminLog: Type.Boolean(),
+            netLog: Type.Boolean(),
+            freezeCheck: Type.Boolean(),
+
+            bePath: Type.String(),
+            modList: Type.Array(Type.Number()),
+            modAppID: Type.Number(),
+            modPath: Type.String(),
+            cleanMods: Type.Boolean(),
+            extraStartupArgs: Type.Optional(Type.String()),
+
+            skipUpdate: Type.Boolean(),
+            skipMods: Type.Boolean(),
+            skipMap: Type.Boolean(),
+            startDayZServer: Type.Boolean(),
+
+            mapURL: Type.String(),
+            copyMission: Type.Boolean(),
+            mapsPath: Type.String(),
+            missionPath: Type.String(),
+            updateMap: Type.Boolean(),
+            exitWithChild: Type.Boolean(),
+        }),
+
+        server: Type.Object({
+            serverName: Type.String(),
+            description: Type.String(),
+            password: Type.String(),
+            adminPassword: Type.String(),
+            maxPlayers: Type.Number(),
+
+            verifySignatures: Type.Number(),
+            forceSameBuild: Type.Number(),
+            disableVon: Type.Number(),
+            vonCodecQuality: Type.Number(),
+            disable3rdPerson: Type.Number(),
+            disableCrosshair: Type.Number(),
+
+            serverTime: Type.String(),
+            serverTimeAcceleration: Type.Number(),
+            serverNightTimeAcceleration: Type.Number(),
+            serverTimePersistent: Type.Number(),
+            guaranteedUpdates: Type.Number(),
+
+            loginQueueConcurrentPlayers: Type.Number(),
+            loginQueueMaxPlayers: Type.Number(),
+            instanceID: Type.Number(),
+            storageAutoFix: Type.Number(),
+
+            motd: Type.String(),
+            motdInterval: Type.Number(),
+            steamQueryPort: Type.Number(),
+            respawnTime: Type.Number(),
+            pingWarning: Type.Number(),
+            pingCritical: Type.Number(),
+            maxPing: Type.Number(),
+            timestampFormat: Type.String(),
+            logAverageFPS: Type.Number(),
+            logMemory: Type.Number(),
+            logPlayers: Type.Number(),
+            logFile: Type.String(),
+
+            adminLogPlayerHitsOnly: Type.Number(),
+            adminLogPlacement: Type.Number(),
+            adminLogBuildActions: Type.Number(),
+            adminLogPlayerList: Type.Number(),
+            enableDebugMonitor: Type.Number(),
+            allowFilePatching: Type.Number(),
+            simulatedPlayersBatch: Type.Number(),
+            multithreadedReplication: Type.Number(),
+            speedhackDetection: Type.Number(),
+
+            networkRangeClose: Type.Number(),
+            networkRangeNear: Type.Number(),
+            networkRangeFar: Type.Number(),
+            networkRangeDistantEffect: Type.Number(),
+            networkObjectBatchLogSlow: Type.Number(),
+            networkObjectBatchEnforceBandwidthLimits: Type.Number(),
+            networkObjectBatchUseEstimatedBandwidth: Type.Number(),
+            networkObjectBatchUseDynamicMaximumBandwidth: Type.Number(),
+            networkObjectBatchBandwidthLimit: Type.Number(),
+            networkObjectBatchCompute: Type.Number(),
+            networkObjectBatchSendCreate: Type.Number(),
+            networkObjectBatchSendDelete: Type.Number(),
+
+            defaultVisibility: Type.Number(),
+            defaultObjectViewDistance: Type.Number(),
+            lightingConfig: Type.Number(),
+            disablePersonalLight: Type.Number(),
+            disableBaseDamage: Type.Number(),
+            disableContainerDamage: Type.Number(),
+            disableRespawnDialog: Type.Number(),
+            serverFpsWarning: Type.Number(),
+            shotValidation: Type.Number(),
+            clientPort: Type.Number(),
+            enableCfgGameplayFile: Type.Number(),
+            template: Type.String(),
+        }),
+
+        battleye: Type.Object({
+            ip: Type.Optional(Type.String()),
+            port: Type.Optional(Type.String()),
+            password: Type.Optional(Type.String()),
+        }),
     },
-    server: {
-        serverName: process.env.SERVER_NAME || "Example Server",
-        description: process.env.DESCRIPTION || "",
-        password: process.env.PASSWORD || "",
-        adminPassword: process.env.ADMIN_PASSWORD || "",
-        maxPlayers: parseInt(process.env.MAX_PLAYERS || "60"),
-        verifySignatures: parseInt(process.env.VERIFY_SIGNATURES || "2"),
-        forceSameBuild: parseInt(process.env.FORCE_SAME_BUILD || "0"),
-        disableVon: parseInt(process.env.DISABLE_VON || "0"),
-        vonCodecQuality: parseInt(process.env.VON_CODEC_QUALITY || "30"),
-        disable3rdPerson: parseInt(process.env.DISABLE_3RD_PERSON || "0"),
-        disableCrosshair: parseInt(process.env.DISABLE_CROSSHAIR || "1"),
-        serverTime: process.env.SERVER_TIME || "SystemTime",
-        serverTimeAcceleration: parseInt(process.env.SERVER_TIME_ACCELERATION || "3"),
-        serverNightTimeAcceleration: parseInt(process.env.SERVER_NIGHT_TIME_ACCELERATION || "4"),
-        serverTimePersistent: parseInt(process.env.SERVER_TIME_PERSISTENT || "1"),
-        guaranteedUpdates: parseInt(process.env.GUARANTEED_UPDATES || "1"),
-        loginQueueConcurrentPlayers: parseInt(process.env.LOGIN_QUEUE_CONCURRENT_PLAYERS || "5"),
-        loginQueueMaxPlayers: parseInt(process.env.LOGIN_QUEUE_MAX_PLAYERS || "500"),
-        instanceID: parseInt(process.env.INSTANCE_ID || "1"),
-        storageAutoFix: parseInt(process.env.STORAGE_AUTO_FIX || "1"),
-        motd: process.env.MOTD || "DayZ in a Box!",
-        motdInterval: parseInt(process.env.MOTD_INTERVAL || "300"),
-        steamQueryPort: parseInt(process.env.STEAM_QUERY_PORT || "2305"),
-        respawnTime: parseInt(process.env.RESPAWN_TIME || "0"),
-        pingWarning: parseInt(process.env.PING_WARNING || "200"),
-        pingCritical: parseInt(process.env.PING_CRITICAL || "250"),
-        maxPing: parseInt(process.env.MAX_PING || "300"),
-        timestampFormat: process.env.TIMESTAMP_FORMAT || "Short",
-        logAverageFPS: parseInt(process.env.LOG_AVERAGE_FPS || "3600"),
-        logMemory: parseInt(process.env.LOG_MEMORY || "3600"),
-        logPlayers: parseInt(process.env.LOG_PLAYERS || "3600"),
-        logFile: process.env.LOG_FILE || "server_console.log",
-        adminLogPlayerHitsOnly: parseInt(process.env.ADMIN_LOG_PLAYER_HITS_ONLY || "0"),
-        adminLogPlacement: parseInt(process.env.ADMIN_LOG_PLACEMENT || "0"),
-        adminLogBuildActions: parseInt(process.env.ADMIN_LOG_BUILD_ACTIONS || "0"),
-        adminLogPlayerList: parseInt(process.env.ADMIN_LOG_PLAYER_LIST || "0"),
-        enableDebugMonitor: parseInt(process.env.ENABLE_DEBUG_MONITOR || "0"),
-        allowFilePatching: parseInt(process.env.ALLOW_FILE_PATCHING || "1"),
-        simulatedPlayersBatch: parseInt(process.env.SIMULATED_PLAYERS_BATCH || "20"),
-        multithreadedReplication: parseInt(process.env.MULTITHREADED_REPLICATION || "1"),
-        speedhackDetection: parseInt(process.env.SPEEDHACK_DETECTION || "1"),
-        networkRangeClose: parseInt(process.env.NETWORK_RANGE_CLOSE || "20"),
-        networkRangeNear: parseInt(process.env.NETWORK_RANGE_NEAR || "150"),
-        networkRangeFar: parseInt(process.env.NETWORK_RANGE_FAR || "1000"),
-        networkRangeDistantEffect: parseInt(process.env.NETWORK_RANGE_DISTANT_EFFECT || "4000"),
-        networkObjectBatchLogSlow: parseInt(process.env.NETWORK_OBJECT_BATCH_LOG_SLOW || "5"),
-        networkObjectBatchEnforceBandwidthLimits: parseFloat(process.env.NETWORK_OBJECT_BATCH_ENFORCE_BANDWIDTH_LIMITS || "1"),
-        networkObjectBatchUseEstimatedBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_ESTIMATED_BANDWIDTH || "0"),
-        networkObjectBatchUseDynamicMaximumBandwidth: parseInt(process.env.NETWORK_OBJECT_BATCH_USE_DYNAMIC_MAXIMUM_BANDWIDTH || "1"),
-        networkObjectBatchBandwidthLimit: parseInt(process.env.NETWORK_OBJECT_BATCH_BANDWIDTH_LIMIT || "0.8"),
-        networkObjectBatchCompute: parseInt(process.env.NETWORK_OBJECT_BATCH_COMPUTE || "1000"),
-        networkObjectBatchSendCreate: parseInt(process.env.NETWORK_OBJECT_BATCH_SEND_CREATE || "10"),
-        networkObjectBatchSendDelete: parseInt(process.env.NETWORK_OBJECT_BATCH_SEND_DELETE || "10"),
-        defaultVisibility: parseInt(process.env.DEFAULT_VISIBILITY || "1375"),
-        defaultObjectViewDistance: parseInt(process.env.DEFAULT_OBJECT_VIEW_DISTANCE || "1375"),
-        lightingConfig: parseInt(process.env.LIGHTING_CONFIG || "1"),
-        disablePersonalLight: parseInt(process.env.DISABLE_PERSONAL_LIGHT || "1"),
-        disableBaseDamage: parseInt(process.env.DISABLE_BASE_DAMAGE || "0"),
-        disableContainerDamage: parseInt(process.env.DISABLE_CONTAINER_DAMAGE || "0"),
-        disableRespawnDialog: parseInt(process.env.DISABLE_RESPAWN_DIALOG || "0"),
-        serverFpsWarning: parseInt(process.env.SERVER_FPS_WARNING || "15"),
-        shotValidation: parseInt(process.env.SHOT_VALIDATION || "1"),
-        clientPort: parseInt(process.env.CLIENT_PORT || "2304"),
-        enableCfgGameplayFile: parseInt(process.env.ENABLE_CFG_GAMEPLAY_FILE || "0"),
-        template: process.env.TEMPLATE || "dayzOffline.chernarusplus",
-    },
-    battleye: {
-        ip: process.env.BE_IP,
-        port: process.env.BE_PORT,
-        password: process.env.BE_PASSWORD,
-    },
+    { additionalProperties: false }
+)
+
+export type ServerZConfig = Static<typeof ServerZSchema>
+
+export function loadAndValidateConfig(): ServerZConfig {
+    const ajv = new Ajv({
+        allErrors: true,
+        coerceTypes: true, // "2302" -> 2302, "true" -> true
+        useDefaults: true, // applies defaults if you include them in TypeBox schema
+    })
+    addFormats(ajv)
+
+    const validate = ajv.compile(ServerZSchema)
+    const rawConfig = nodeConfig.get<unknown>("serverz")
+
+    if (typeof rawConfig === "object" && rawConfig !== null) {
+        if ("meta" in rawConfig && typeof rawConfig.meta === "object" && rawConfig.meta !== null) {
+            if (!rawConfig.meta["cpuCount"]) rawConfig.meta["cpuCount"] = Math.floor(cpus().length / 2)
+
+            if (typeof rawConfig.meta["modList"] === "string" && !Array.isArray(rawConfig.meta["modList"]))
+                rawConfig.meta["modList"] = rawConfig.meta["modList"]
+                    .split(",")
+                    .map((m) => Number(m.trim()))
+                    .filter((m) => Number.isFinite(m))
+            if (typeof rawConfig.meta["modList"] !== "string" && !Array.isArray(rawConfig.meta["modList"])) rawConfig.meta["modList"] = []
+
+            const useProvidedOrDefaultOnServerPath = useProvidedOrDefaultOnServerPathFactory(rawConfig.meta["serverDirectory"])
+
+            rawConfig.meta["dayZBinaryPath"] = useProvidedOrDefaultOnServerPath(defaultConfig.meta["dayZBinaryPath"], rawConfig.meta["dayZBinaryPath"])
+            rawConfig.meta["configPath"] = useProvidedOrDefaultOnServerPath(defaultConfig.meta["configPath"], rawConfig.meta["configPath"])
+            rawConfig.meta["bePath"] = useProvidedOrDefaultOnServerPath(defaultConfig.meta["bePath"], rawConfig.meta["bePath"])
+            rawConfig.meta["modPath"] = useProvidedOrDefaultOnServerPath(
+                defaultConfig.meta["modPath"],
+                rawConfig.meta["modPath"],
+                `${rawConfig.meta["modPath"]}/${rawConfig.meta["modAppID"]}`
+            )
+            rawConfig.meta["mapsPath"] = useProvidedOrDefaultOnServerPath(defaultConfig.meta["mapsPath"], rawConfig.meta["mapsPath"])
+
+            if ("server" in rawConfig && typeof rawConfig.server === "object" && rawConfig.server !== null)
+                rawConfig.meta["missionPath"] = useProvidedOrDefaultOnServerPath(
+                    defaultConfig.meta["missionPath"],
+                    rawConfig.meta["missionPath"],
+                    `mpmissions/${rawConfig.server["template"]}`
+                )
+        }
+    }
+
+    if (!validate(rawConfig)) {
+        console.error("Invalid ServerZ configuration:", validate.errors)
+        process.exit(1)
+    }
+
+    return rawConfig as ServerZConfig
 }
 
-config.meta.dayZBinaryPath = process.env.DAYZ_BINARY_PATH || `${config.meta.serverDirectory}/${config.meta.dayZBinaryPath}`
-config.meta.configPath = process.env.CONFIG_PATH || `${config.meta.serverDirectory}/${config.meta.configPath}`
-config.meta.bePath = process.env.BE_PATH || `${config.meta.serverDirectory}/${config.meta.bePath}`
-config.meta.modPath = process.env.MOD_PATH || `${config.meta.serverDirectory}/${config.meta.modPath}/${config.meta.modAppID}`
-config.meta.mapsPath = process.env.MAPS_PATH || `${config.meta.serverDirectory}/${config.meta.mapsPath}`
-config.meta.missionPath = process.env.MISSION_PATH || `${config.meta.serverDirectory}/mpmissions/${config.server.template}`
+export const config = loadAndValidateConfig()
+
+function useProvidedOrDefaultOnServerPathFactory(serverDirectory: string) {
+    return <T>(defaultValue: T, current: T | undefined, replacementSuffix?: string) => {
+        if (current !== defaultValue) return current
+        return `${serverDirectory}/${replacementSuffix ?? defaultValue}`
+    }
+}

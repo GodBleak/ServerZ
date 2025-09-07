@@ -17,7 +17,11 @@
     "author": "GodBleak",
     "license": "MIT",
     "dependencies": {
+        "@sinclair/typebox": "^0.34.41",
+        "ajv": "^8.17.1",
+        "ajv-formats": "^3.0.1",
         "cli-progress": "^3.12.0",
+        "config": "^4.1.1",
         "dotenv": "^16.4.5",
         "node-pty": "^1.0.0",
         "simple-git": "^3.23.0",

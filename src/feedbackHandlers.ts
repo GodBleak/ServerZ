@@ -102,7 +102,7 @@ export class ModInstallationFeedback {
         { format: " {bar} | updating mod: {currentMod} | {value}/{total}", clearOnComplete: false, noTTYOutput: true },
         CLIProgress.Presets.shades_classic
     )
-    private finishedMods: number = 0
+    private finishedMods: Set<string> = new Set()
     private currentMod: string | null = null
     constructor() {
         this.bar.start(config.meta.modList.length, 0, { currentMod: "initializing", progress: 0 })
@@ -116,20 +116,21 @@ export class ModInstallationFeedback {
             const updates = data[updateKey]
             const isDone = updates.some((update) => update.startsWith("Success. Downloaded item"))
             if (isDone) {
-                this.finishedMods++
-                this.bar.update(this.finishedMods, { currentMod: thisMod, progress: this.finishedMods / config.meta.modList.length })
+                this.finishedMods.add(thisMod)
+                this.bar.update(this.finishedMods.size, { currentMod: thisMod, progress: this.finishedMods.size / config.meta.modList.length })
             }
+
             if (thisMod !== this.currentMod) {
-                this.bar.update(this.finishedMods, { currentMod: thisMod, progress: this.finishedMods / config.meta.modList.length })
+                this.bar.update(this.finishedMods.size, { currentMod: thisMod, progress: this.finishedMods.size / config.meta.modList.length })
                 this.currentMod = thisMod
             }
         }
     }
 
     finish(result: string[]) {
-        if (this.finishedMods !== config.meta.modList.length) {
+        if (this.finishedMods.size !== config.meta.modList.length) {
             console.error("\n\nSome mods didn't install:\n\n", result.join("\n"))
-            throw new Error("Mod Installation Failed")
+            throw new Error(`Mod Installation Failed! Expected ${config.meta.modList.length} mods, but ${this.finishedMods.size} were installed.`)
         }
         this.bar.stop()
     }

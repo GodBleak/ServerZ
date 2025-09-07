@@ -21,7 +21,7 @@ RUN apt update && apt -y install --no-install-recommends steamcmd
 
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 18.18.2
+ENV NODE_VERSION 22.17.0
 
 RUN wget -O- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
@@ -37,6 +37,7 @@ WORKDIR /serverz
 
 COPY package.json package-lock.json healthcheck.sh ./
 COPY dist/ dist/
+COPY config/ config/
 
 RUN chmod +x healthcheck.sh
 
