@@ -281,7 +281,7 @@ async function createModKeyLinks(id: number) {
 async function getKeysPath(id: number) {
     // Some mods use "keys" and others use "Keys" 🤬
     const modDir = await readdir(`${config.meta.modPath}/${id}`)
-    let keysDir = modDir.find((dir) => dir === "keys")
+    let keysDir: "keys" | "Keys" | undefined = modDir.find((dir) => dir === "keys")
     if (!keysDir) keysDir = modDir.find((dir) => dir === "Keys")
     if (!keysDir) throw new Error(`Could not find keys directory for mod ${id}`)
     return `${config.meta.modPath}/${id}/${keysDir}`
