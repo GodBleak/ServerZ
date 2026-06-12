@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "rules": {
+    "eslint/no-unused-vars": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/consistent-type-imports": ["error", { "prefer": "type-imports", "fixStyle": "inline-type-imports" }],
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "curly": ["error", "multi-or-nest", "consistent"]
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  }
+}

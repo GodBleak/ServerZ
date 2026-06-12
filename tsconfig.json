@@ -1,16 +1,31 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "target": "ES2022",
-        "module": "preserve",
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "noImplicitAny": false,
-        "importsNotUsedAsValues": "remove",
-        "outDir": "dist",
-        "rootDir": "src",
-        "types": ["node"],
-        "resolveJsonModule": true
+  "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["bun"],
+    "lib": ["ESNext"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "jsx-runtime",
+    "paths": {
+      "depot-client": ["./src/lib/steamapi/depot-client/index.ts"],
+      "depot-client/*": ["./src/lib/steamapi/depot-client/*"],
+      "#config": ["./src/config/index.ts"],
+      "#config/*": ["./src/config/*"],
+      "#lib": ["./src/lib/index.ts"],
+      "#lib/*": ["./src/lib/*"],
+      "jsx-runtime": ["./jsx-runtime.ts"],
+      "jsx-runtime/*": ["./jsx-runtime.ts"]
     }
+  },
+  "include": ["**/*"],
+  "exclude": ["src/api"]
 }
