@@ -27,7 +27,7 @@ The environment variables are split into three sections: **Meta**, **Server**, a
 | `NET_LOG` | `false` | adds -netlog to the server start command |
 | `FREEZE_CHECK` | `false` | adds -freezecheck to the server start command |
 | `BE_PATH` | `${GENERATED_CONFIG_DIRECTORY}/battleye` | The path to the BattlEye directory |
-| `MOD_LIST` | `[]` | A comma separated list of mod IDs to download and enable on the server |
+| `MOD_LIST` | `[]` | AN array of mod IDs to download and enable on the server |
 | `MOD_APP_ID` | `221100` | The Steam App ID the workshop items (AKA: the mods) are associated with |
 | `MOD_PATH` | `${INSTALL_DIRECTORY}/steamapps/workshop/content/${MOD_APP_ID}` | The container path to where the downloaded workshop items can be found |
 | `CLEAN_MODS` | `false` | On start, the server will uninstall and delete all mods not found in `MOD_LIST`. (Uninstallation is limited to reversing any actions performed by the server to install the mods, any other configuration (whether applied manually or by the mod itself) will remain) |
@@ -39,7 +39,7 @@ The environment variables are split into three sections: **Meta**, **Server**, a
 | `MAP_URL` | `undefined` | The URL to download the map from. If set, ServerZ will download the map from the URL and symlink it into `MAPS_PATH`. |
 | `COPY_MISSION` | `undefined` | **Deprecated.** When set to true, will copy the mission directory into `mpmissions`. This option is deprecated and will be removed in a future version. OverlayFS ensures all mission edits persist automatically. COPY_MISSION was a workaround for persistence that should no longer be needed. If OverlayFS doesn't replace this option for you, please let us know by creating an issue. See [readme.md#issues](../readme.md#issues) |
 | `COPY_MISSION_UP` | `undefined` | When `COPY_MISSION` is enabled, copy the mission into `OVERRIDES_DIRECTORY/mpmissions` instead of `INSTALL_DIRECTORY/mpmissions`. Useful when mission files should live with operator-managed overrides. |
-| `MAPS_PATH` | `${SERVER_DIRECTORY}/maps` | The container path to download maps to. |
+| `MAPS_PATH` | `${INSTALL_DIRECTORY}/maps` | The container path to download maps to. |
 | `MISSION_PATH` | `${SERVER_DIRECTORY}/mpmissions/${TEMPLATE}` | The container path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
 | `UPDATE_MAP` | `false` | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
 | `EXIT_WITH_CHILD` | `true` | When **not set to false**, the server will exit when the child process (DayZServer) exits. |

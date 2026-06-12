@@ -43,7 +43,10 @@
                 "__format": "boolean"
             },
             "bePath": "BE_PATH",
-            "modList": "MOD_LIST",
+            "modList": {
+                "__name": "MOD_LIST",
+                "__format": "json"
+            },
             "modAppID": {
                 "__name": "MOD_APP_ID",
                 "__format": "number"
