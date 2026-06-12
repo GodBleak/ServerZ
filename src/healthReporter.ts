@@ -1,5 +1,3 @@
-import { writeFile } from "node:fs/promises"
-
 export class HealthReporter {
     private interval: NodeJS.Timeout | null = null
 
@@ -7,7 +5,7 @@ export class HealthReporter {
 
     public start() {
         this.interval = setInterval(async () => {
-            await writeFile("/tmp/health", new Date().toISOString())
+            await Bun.write("/tmp/health", new Date().toISOString())
         }, this.intervalMs)
     }
 
@@ -15,3 +13,5 @@ export class HealthReporter {
         if (this.interval) clearInterval(this.interval)
     }
 }
+
+export const healthReporter = new HealthReporter(1000 * 10)
