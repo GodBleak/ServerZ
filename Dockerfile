@@ -1,56 +1,59 @@
-FROM debian:bookworm
+FROM oven/bun:1.3.14-debian AS runtime-base
 
-RUN apt update && apt -y upgrade
-RUN apt -y install --no-install-recommends \
-    wget \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt -y install --no-install-recommends \
     git \
     ca-certificates \
     libsdl2-2.0-0 \
     libcap2 \
-    python3-pip \
-    build-essential    
+    rsync \
+    fuse-overlayfs \
+    util-linux \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://gist.githubusercontent.com/hakerdefo/5e1f51fa93ff37871b9ff738b05ba30f/raw/7b5a0ff76b7f963c52f2b33baa20d8c4033bce4d/sources.list -O /etc/apt/sources.list
-
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
-    && echo steam steam/question select "I AGREE" | debconf-set-selections \
-    && echo steam steam/license note '' | debconf-set-selections \
-    && dpkg --add-architecture i386
-
-RUN apt update && apt -y install --no-install-recommends steamcmd
-
-RUN mkdir /usr/local/nvm
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 22.17.0
-
-RUN wget -O- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash \
-    && . $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default
-
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-RUN mkdir -p /home/ctrusr /dayz /serverz /profiles
+RUN mkdir -p /serverz /dayz /install /overrides /data /profiles
 
 WORKDIR /serverz
 
-COPY package.json package-lock.json healthcheck.sh ./
-COPY dist/ dist/
+# Copy lockfile and package.json first for better layer caching
+COPY package.json bun.lock* ./
+COPY src/lib/steamapi/depot-client/package.json ./src/lib/steamapi/depot-client/
+
+RUN bun install --frozen-lockfile --production
+
+# Copy source after deps so source changes don't bust the install layer
+COPY healthcheck.sh ./
+COPY jsx-runtime.ts ./
+COPY tsconfig.json ./
+COPY templates/ templates/
 COPY config/ config/
+COPY src/ src/
 
 RUN chmod +x healthcheck.sh
 
+# Default Game port
 EXPOSE 2302/udp
-EXPOSE 2303/udp
+# Default BattlEye port
 EXPOSE 2304/udp
+# Default RCon port
 EXPOSE 2305/udp
-EXPOSE 8766/udp
-EXPOSE 27016/udp
-EXPOSE 2310
+# Default Steam query port
+EXPOSE 27015/udp 
 
-RUN npm install
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20m --retries=3 CMD [ "/serverz/healthcheck.sh" ]
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 CMD [ "/serverz/healthcheck.sh" ]
+ENV ALLOW_CONFIG_MUTATIONS=true
+ENV USE_USERXATTR=false
 
-CMD ["node", "dist/index.js"]
+
+FROM runtime-base AS rootful
+
+CMD ["bun", "src/index.ts"]
+
+
+FROM runtime-base AS rootless
+
+ENV USE_USERXATTR=true
+
+CMD ["unshare", "--user", "--map-root-user", "--mount", "bun", "src/index.ts"]

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 HEALTH_CHECK_FILE="/tmp/health"
-MAX_AGE_SECONDS=10
+MAX_AGE_SECONDS=30
 
 if [ ! -f "$HEALTH_CHECK_FILE" ]; then
   exit 1
