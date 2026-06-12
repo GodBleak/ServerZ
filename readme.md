@@ -4,28 +4,27 @@ ServerZ is a DayZ server wrapper made for running DayZ in containerized environm
 
 ## Features
 
--   Automatic server installation and update.
--   Automatic mod installation and update.
--   Nearly all of `serverDZ.cfg` is configurable through environment variables.
--   Easy configuration of many (if not all) other server settings, again, through environment variables.
+- Automatic server installation and update.
+- Automatic mod installation and update.
+- All of `serverDZ.cfg` is configurable through environment variables.
+- Easy configuration of many (if not all) other server settings, again, through environment variables.
 
 ## Usage
 
-> 🔵 **Note:** By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment vaiable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
+> 🔵 **Note:** By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment variable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
 
 ### Docker
 
-Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data. Replace `your_steam_username`, `your_steam_password`, and `your_steam_guard_code` with your Steam credentials and Steam Guard code.
+Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data. You'll want to ensure you have all 3 layer directories (see [Persistence and OverlayFS](#persistence-and-overlayfs) below) and the steam directory created beforehand.
 
 ```bash
 docker run -d -P \
-    -v "/path/to/persistent/dayz/directory:/dayz" \
-    -v "/path/to/persistent/profiles/directory:/profiles" \
-    -e "STEAM_USERNAME=your_steam_username" \
-    -e "STEAM_PASSWORD=your_steam_password" \
-    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
     -p 2302:2302/udp \
-    -p 2305:2305/udp \
+    -p 27015:27015/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -37,20 +36,35 @@ Replace `/path/to/persistent/***/directory` with the path to a directory on your
 ```yaml
 version: "3.7"
 services:
-    serverz:
-        image: registry.godbleak.dev/godbleak/serverz:latest
-        restart: unless-stopped
-        volumes:
-            - "/path/to/persistent/dayz/directory:/dayz"
-            - "/path/to/persistent/profiles/directory:/profiles"
-        environment:
-            STEAM_USERNAME: your_steam_username
-            STEAM_PASSWORD: your_steam_password
-            STEAM_GUARD_CODE: your_steam_guard_code
-            MOTD: DayZ Server in a Box # Example of setting a serverDZ.cfg variable
-        ports:
-            - 2302:2302/udp
-            - 2305:2305/udp
+  serverz:
+    image: registry.godbleak.dev/godbleak/serverz:latest
+    restart: unless-stopped
+    environment:
+      MOTD: '["DayZ Server in a Box"]' # Example of setting a serverDZ.cfg variable
+    volumes:
+      - "/path/to/persistent/data/directory:/data"
+      - "/path/to/persistent/overrides/directory:/overrides"
+      - "/path/to/persistent/install/directory:/install"
+      - "/path/to/persistent/steam/directory:/root/.steam"
+    ports:
+      - 2302:2302/udp
+      - 27015:27015/udp
+```
+
+### Rootless
+
+ServerZ treats rootless deployment as a first-class citizen, and provides the `:rootless` for it. The rootless image is designed to be used with and tested against [Podman](https://podman.io/). YMMV with rootless Docker.
+
+```bash
+podman run -d -P \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
+    -p 2302:2302/udp \
+    -p 27015:27015/udp \
+    --restart unless-stopped \
+    registry.godbleak.dev/godbleak/serverz:rootless
 ```
 
 ### Development
@@ -70,26 +84,20 @@ cd serverz
 3. Install the dependencies.
 
 ```bash
-npm install
+bun install
 ```
 
 4. Develop.
 5. Run in development mode.
 
 ```bash
-npm run dev
+bun run dev
 ```
 
-6. Build for production.
+6. Run in production mode.
 
 ```bash
-npm run build
-```
-
-7. Run in production mode.
-
-```bash
-npm start
+bun start
 ```
 
 ## Environment Variables
@@ -100,8 +108,8 @@ See [Environment Variables](doc/environment_variables.md).
 
 By default, the server uses the following ports:
 
--   2302/udp (Game Port)
--   2305/udp (Steam Query Port)
+- 2302/udp (Game Port)
+- 27015/udp (Steam Query Port)
 
 To change these ports, it's not enough to modify the port mapping in your docker configuration. You'll also need to set the `PORT` and `STEAM_QUERY_PORT` environment variables to the new port numbers.
 
@@ -111,14 +119,13 @@ To install mods, set the `MOD_LIST` environment variable to a comma separated li
 
 ```bash
 docker run -d -P \
-    -v "/path/to/persistent/dayz/directory:/dayz" \
-    -v "/path/to/persistent/profiles/directory:/profiles" \
-    -e "STEAM_USERNAME=your_steam_username" \
-    -e "STEAM_PASSWORD=your_steam_password" \
-    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
-    -e "MOD_LIST=1559212036,1828439124" \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
+    -e "MOD_LIST='[1559212036,1828439124]'" \
     -p 2302:2302/udp \
-    -p 2305:2305/udp \
+    -p 27015:27015/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -127,10 +134,10 @@ docker run -d -P \
 >
 > The server will do the following for you:
 >
-> -   Download the mods
-> -   Create a symlink from its workshop folder to its `@mod` folder in the server root
-> -   Link all the mod's keys to the server's keys folder
-> -   Add the mods to the server's launch parameters
+> - Download the mods
+> - Create a symlink from its workshop folder to its `@mod` folder in the server root
+> - Link all the mod's keys to the server's keys folder
+> - Add the mods to the server's launch parameters
 >
 > Anything beyond this will need to be done manually.
 
@@ -138,19 +145,19 @@ docker run -d -P \
 
 By default the server will load Chernarus. However, if you'd instead like to use...
 
-### DLC (Frostline)
-To enable a DLC map, you typically only need to set the TEMPLATE environment variable. For example, to run a server on Frostline (Currently the only DLC map), you could use the following docker run command:
+### DLC (Sakhal)
+
+To enable a DLC map, you typically only need to set the TEMPLATE environment variable. For example, to run a server on Sakhal, you could use the following docker run command:
 
 ```bash
 docker run -d -P \
-    -v "/path/to/persistent/dayz/directory:/dayz" \
-    -v "/path/to/persistent/profiles/directory:/profiles" \
-    -e "STEAM_USERNAME=your_steam_username" \
-    -e "STEAM_PASSWORD=your_steam_password" \
-    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
     -e "TEMPLATE=dayzOffline.sakhal" \
     -p 2302:2302/udp \
-    -p 2305:2305/udp \
+    -p 27015:27015/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -161,14 +168,13 @@ You only need to set the `TEMPLATE` environment variable. For example, you could
 
 ```bash
 docker run -d -P \
-    -v "/path/to/persistent/dayz/directory:/dayz" \
-    -v "/path/to/persistent/profiles/directory:/profiles" \
-    -e "STEAM_USERNAME=your_steam_username" \
-    -e "STEAM_PASSWORD=your_steam_password" \
-    -e "STEAM_GUARD_CODE=your_steam_guard_code" \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
     -e "TEMPLATE=dayzOffline.enoch" \
     -p 2302:2302/udp \
-    -p 2305:2305/udp \
+    -p 27015:27015/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
@@ -177,36 +183,29 @@ docker run -d -P \
 
 You will need to tell the server how to download it. Currently the server can obtain it one of three ways:
 
--   From the workshop
--   From a git repository
--   From a zip file
+- From the workshop
+- From a git repository
+- From a zip file
 
 ---
 
 #### Download from Workshop
 
+> **🟠 Warning:** This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`).
+
 To download a map from the workshop, you can simply add the map's workshop ID to the `MOD_LIST` environment variable.
 
-Maps downloaded from the workshop are downloaded to the same location as mods (Usually `/dayz/steamapps/workshop/content/221100`).
-
-> **🟠 Warning:** This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`).
->
-> **If** the map stores persistent data within its mod folder\*:
->
-> -   and said data is stored solely within the mission directory, use `COPY_MISSION` to have the server copy the mission folder to the `mpmission` directory, rather than symlink it.
-> -   otherwise, if data is stored anywhere else in the mod folder, it may be lost on server restart.
->
-> _\* Not enough testing/research has been conducted to determine if this is actually applicable to any map._
+Maps downloaded from the workshop are downloaded to the same location as mods (Usually `/install/223350/steamapps/workshop/content/221100`).
 
 #### Download from Git or Zip
 
 To download a map from a git repository or a zip file, you can set the `MAP_URL` environment variable to the URL of the repository (git repo URL should end in `.git`) or zip file.
 
-Maps downloaded this way are downloaded to the `maps` directory in the server root (Usually `/dayz/maps`).
+Maps downloaded this way are downloaded to the `maps` directory in the server root (Usually `/install/223350/maps`).
 
 ---
 
-Once you've set the appropriate environment variable to download the map, you'll need to set the `MISSION_PATH` environment variable to tell the server where the mission folder is located. The server will symlink (or copy, if `COPY_MISSION` is `true`) the mission folder into the `mpmission` directory.
+Once you've set the appropriate environment variable to download the map, you'll need to set the `MISSION_PATH` environment variable to tell the server where the mission folder is located. The server will symlink the mission folder into the `mpmission` directory.
 
 Finally, you'll need to set the `TEMPLATE` environment variable to the name of the map's mission folder.
 
@@ -215,23 +214,22 @@ For example, to run a server on the [Namalsk](https://www.nightstalkers.cz/namal
 ```yaml
 version: "3.7"
 services:
-    serverz:
-        image: registry.godbleak.dev/godbleak/serverz:latest
-        restart: unless-stopped
-        volumes:
-            - "/path/to/persistent/dayz/directory:/dayz"
-            - "/path/to/persistent/profiles/directory:/profiles"
-        environment:
-            STEAM_USERNAME: your_steam_username
-            STEAM_PASSWORD: your_steam_password
-            STEAM_GUARD_CODE: your_steam_guard_code
-            MOD_LIST: 1559212036,2288339650,2288336145 # CF, Namalsk Island (server), Namalsk Survival (server)
-            MISSION_PATH: /dayz/steamapps/workshop/content/221100/2288336145/Extras/Regular/regular.namalsk
-            COPY_MISSION: true
-            TEMPLATE: regular.namalsk
-        ports:
-            - 2302:2302/udp
-            - 2305:2305/udp
+  serverz:
+    image: registry.godbleak.dev/godbleak/serverz:latest
+    restart: unless-stopped
+    volumes:
+      - "/path/to/persistent/data/directory:/data"
+      - "/path/to/persistent/overrides/directory:/overrides"
+      - "/path/to/persistent/install/directory:/install"
+      - "/path/to/persistent/steam/directory:/root/.steam"
+    environment:
+      MOD_LIST: "[1559212036,2288339650,2288336145]" # CF, Namalsk Island (server), Namalsk Survival (server)
+      MISSION_PATH: /dayz/223350/steamapps/workshop/content/221100/2288336145/Extras/Regular/regular.namalsk
+      COPY_MISSION: true
+      TEMPLATE: regular.namalsk
+    ports:
+      - 2302:2302/udp
+      - 27015:27015/udp
 ```
 
 To run a server on the [Banov](https://steamcommunity.com/sharedfiles/filedetails/?id=2415195639) map, downloaded from a git repository, you could use the following docker-compose file:
@@ -239,23 +237,22 @@ To run a server on the [Banov](https://steamcommunity.com/sharedfiles/filedetail
 ```yaml
 version: "3.7"
 services:
-    serverz:
-        image: registry.godbleak.dev/godbleak/serverz:latest
-        restart: unless-stopped
-        volumes:
-            - "/path/to/persistent/dayz/directory:/dayz"
-            - "/path/to/persistent/profiles/directory:/profiles"
-        environment:
-            STEAM_USERNAME: your_steam_username
-            STEAM_PASSWORD: your_steam_password
-            STEAM_GUARD_CODE: your_steam_guard_code
-            MOD_LIST: 1559212036,2415195639 # CF, Banov
-            MAP_URL: https://github.com/KubeloLive/Banov.git
-            MISSION_PATH: /dayz/maps/Banov/empty.banov
-            TEMPLATE: empty.banov
-        ports:
-            - 2302:2302/udp
-            - 2305:2305/udp
+  serverz:
+    image: registry.godbleak.dev/godbleak/serverz:latest
+    restart: unless-stopped
+    volumes:
+      - "/path/to/persistent/data/directory:/data"
+      - "/path/to/persistent/overrides/directory:/overrides"
+      - "/path/to/persistent/install/directory:/install"
+      - "/path/to/persistent/steam/directory:/root/.steam"
+    environment:
+      MOD_LIST: "[1559212036,2415195639]" # CF, Banov
+      MAP_URL: https://github.com/KubeloLive/Banov.git
+      MISSION_PATH: /dayz/223350/maps/Banov/empty.banov
+      TEMPLATE: empty.banov
+    ports:
+      - 2302:2302/udp
+      - 27015:27015/udp
 ```
 
 ## Experimental
@@ -265,6 +262,137 @@ To run the experimental DayZ Server, change the `APP_ID` environment variable to
 ### Mods
 
 To install mods when running the experimental server, set the `MOD_APP_ID` environment variable to the app ID of the experimental client (1024020). This changes the steamCMD command to download the mods from the workshop associated with the experimental client.
+
+## Persistence and OverlayFS
+
+As of version 2.0.0, ServerZ now utilizes OverlayFS, for a few reasons:
+
+- To make sure **your customizations to the base game aren't overwritten by Steam** when updating or validating the server, maps, or mods.
+- To **allow one installation of DayZ to serve multiple instances of ServerZ.** With this, one ServerZ instance has a base installation size of ~3GB, you can add another, 5, or 100 or more instances of ServerZ, and still only be using ~3GB of disk space for base installs, total.
+- To facilitate **thinner backups.** Because all server writes are captured to `DATA_DIRECTORY`, you can backup _server state_ (not configuration) by backing up the `DATA_DIRECTORY` and it will only contain the delta between your server's state and the base game state -- your backups don't need to contain the entire DayZ Server installation.
+
+### OverlayFS
+
+<details>
+  <summary>For the uninitiated...</summary>
+
+OverlayFS is an implementation of a [union mount](https://en.wikipedia.org/wiki/Union_mount). A union mount allows you to layer multiple directories on top of each other, and present them as a single directory. You can visualize this much like [cel animation](https://en.wikipedia.org/wiki/Traditional_animation#Cels):
+
+  <div align="center">
+    <figure>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Animation_cells.png" alt="Diagram of the cel animation process">
+      <figcaption>By <a href="https://en.wikipedia.org/wiki/User:Garrett_Albright" class="extiw" title="en:User:Garrett Albright">Garrett Albright</a> at the <a href="https://en.wikipedia.org/wiki/" class="extiw" title="w:">English-language Wikipedia</a>, <a href="http://creativecommons.org/licenses/by-sa/3.0/" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=15966073">Link</a></figcaption>
+    </figure>
+  </div>
+
+Where the base game is the background, your customizations are the orange character cel in the diagram, while the server writes to the yellow character cel. The resulting "merged view" (or "merged directory") is the composite image. From DayZServer's perspective (same as the camera's), this appears as a regular single directory.
+
+</details>
+
+#### Layer Overview
+
+Merged Directory:
+
+```
+/dayz/223350 (SERVER_DIRECTORY) <- Merged view of the upper and lower directories. This is the directory that DayZServer is presented as its working directory. You should not mount this directory.
+```
+
+Upper Directory:
+
+```
+/data/223350 (DATA_DIRECTORY) <- Where DayZServer writes get captured to.
+```
+
+Lower Directories:
+
+```
+/tmp/serverz/dayz/223350 (GENERATED_CONFIG_DIRECTORY) <- ServerZ managed, is where configuration files generated from environment variables are stored. Should not be mounted.
+/overrides/223350 (OVERRIDES_DIRECTORY) <- Your local overrides of the base install. See Overrides below.
+/install/223350 (INSTALL_DIRECTORY) <- Steam managed. May be shared across multiple ServerZ instances.
+```
+
+### Overrides
+
+When you need to edit server files, you should not edit files in `INSTALL_DIRECTORY`, instead you should store your modified files in `OVERRIDES_DIRECTORY`.
+
+### Manual Editing
+
+For example sake, let's assume you bind mount `INSTALL_DIRECTORY` to `./install` on your host, and `OVERRIDES_DIRECTORY` to `./overrides` on your host.
+
+When you edit a file in `./overrides`, it will take precedence over the same file in `./install`, in the container. You only need to mirror the path of files you want to override - not the entire game directory. For example, to customize the types.xml in your
+mission:
+
+Base game structure:
+
+```
+./install
+└── 223350
+    ├── DayZServer
+    ├── mpmissions/
+    │   └── dayzOffline.chernarusplus/
+    │       ├── init.c
+    │       ├── db/
+    │       │   ├── types.xml      ← file you want to edit
+    │       │   ├── events.xml
+    │       │   └── messages.xml
+    │       └── ...
+    └── ...
+```
+
+Your overrides directory only needs the path to the file:
+
+```
+./overrides
+└── 223350
+    └── mpmissions/
+        └── dayzOffline.chernarusplus/
+            └── db/
+                └── types.xml      ← your customized version
+```
+
+**To modify an existing file**, copy it from `./install` first:
+
+```bash
+mkdir -p ./overrides/223350/mpmissions/dayzOffline.chernarusplus/db
+cp ./install/223350/mpmissions/dayzOffline.chernarusplus/db/types.xml \
+   ./overrides/223350/mpmissions/dayzOffline.chernarusplus/db/
+nano ./overrides/223350/mpmissions/dayzOffline.chernarusplus/db/types.xml
+```
+
+**To add a new file** that doesn't exist in the base game, just create it:
+
+```bash
+mkdir -p ./overrides/223350/mpmissions/dayzOffline.chernarusplus/db
+nano ./overrides/223350/mpmissions/dayzOffline.chernarusplus/db/custom.xml
+```
+
+The server will see the merged result: your `types.xml` from overrides,
+and everything else from the base install. No need to copy files you
+aren't changing.
+
+### Easier: Web-Based File Editor
+
+**Before editing:** Stop your ServerZ container(s) to avoid inconsistent state.
+
+If recreating directory structures by hand is tedious, you can run a web-based file browser that handles the overlay mechanics for you - you see the
+complete merged file tree and any edits automatically land in `./overrides`:
+
+```bash
+podman run -d \
+    --name serverz-editor \
+    -u "0:0" \
+    -e FB_PORT=8080 \
+    -v "$PWD/install:/srv:O,upperdir=$PWD/overrides,workdir=$PWD/.filebrowser-work" \
+    -v "$PWD/data/223350/profiles:/srv/223350/profiles:Z" \
+    -v filebrowser_database:/database \
+    -p 8080:8080 \
+    filebrowser/filebrowser
+```
+
+Visit `http://localhost:8080` in your browser, use "admin" as the username, and the password printed in the container's logs.
+
+Refer to [filebrowser/filebrowser](https://github.com/filebrowser/filebrowser)
+for usage and configuration.
 
 ## Issues
 
