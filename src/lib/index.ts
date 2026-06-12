@@ -1,1 +1,1 @@
-export { SteamCMD } from "./steamcmd/index.js"
+export { SteamAPI } from "./steamapi"
