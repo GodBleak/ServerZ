@@ -3,8 +3,15 @@ stages:
   - image
   - mirror
 
+default:
+  tags:
+    - runner-please
+
 variables:
   DOCKER_BUILDKIT: "1"
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: "overlay2"
   GITLAB_IMAGE: "$CI_REGISTRY_IMAGE"
   GHCR_IMAGE: "ghcr.io/godbleak/serverz"
 
@@ -23,15 +30,17 @@ publish:images:
   stage: image
   image: docker:27
   services:
-    - docker:27-dind
+    - name: docker:27-dind
+      alias: docker
 
   rules:
     - if: '$CI_COMMIT_BRANCH == "beta"'
     - if: "$CI_COMMIT_TAG"
 
   before_script:
-    - printf "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
-    - printf "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+    - docker info
+    - printf '%s' "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 
   script:
     - |
@@ -94,6 +103,11 @@ mirror:github:
   stage: mirror
   image: alpine:latest
 
+  variables:
+    GIT_DEPTH: "0"
+
+  resource_group: github-mirror
+
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
@@ -104,7 +118,7 @@ mirror:github:
 
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - printf "$GITHUB_DEPLOY_KEY" > ~/.ssh/id_ed25519
+    - printf '%s\n' "$GITHUB_DEPLOY_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
 
