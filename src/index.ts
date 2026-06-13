@@ -5,7 +5,6 @@ import { hang } from "#lib/hang"
 import { Server } from "./server.js"
 import { overlay } from "./overlay.js"
 import { wipe } from "./wipe.js"
-import { healthReporter } from "./healthReporter.js"
 import qrcode from "qrcode-terminal"
 import type { QrChallenge } from "depot-client/src/types.js"
 

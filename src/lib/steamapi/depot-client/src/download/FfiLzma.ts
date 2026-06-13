@@ -72,9 +72,9 @@ export function loadFfiLzma(options: FfiLzmaOptions = {}): FfiLzmaBinding | null
 export function decompressLzmaAloneWithFfi(payload: Buffer, decompressedSize: number, options: FfiLzmaOptions = {}): Buffer {
   const binding = loadFfiLzma(options)
   if (!binding)
-    throw new Error(
+    {throw new Error(
       "ffi-liblzma backend was requested, but native libsteam_lzma was not found. Run `bun run build:native:lzma` or set STEAM_FFI_LZMA_LIBRARY_PATH."
-    )
+    )}
 
   return binding.decompressAlone(payload, decompressedSize)
 }

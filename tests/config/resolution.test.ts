@@ -1,7 +1,7 @@
 import { test, expect, describe } from "bun:test"
 import { DEFAULTS as _DEFAULTS } from "./defaults"
 import { resolveConfig } from "../../src/config/resolver"
-import { ServerZSchema } from "../../src/config/schema"
+import { type ServerZSchema } from "../../src/config/schema"
 
 const DEFAULTS = () => structuredClone(_DEFAULTS) as typeof _DEFAULTS
 
