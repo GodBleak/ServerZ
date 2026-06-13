@@ -43,7 +43,7 @@ publish:images:
 
   script:
     - |
-      set -eu
+      set -eux
 
       if [ -n "${CI_COMMIT_TAG:-}" ]; then
         VERSION="${CI_COMMIT_TAG#v}"
@@ -73,10 +73,10 @@ publish:images:
         "
       fi
 
-      buildah build \
-        --isolation=chroot \
-        --storage-driver=vfs \
-        --format=docker \
+      buildah bud \
+        --isolation chroot \
+        --storage-driver vfs \
+        --format docker \
         --pull \
         --target rootful \
         -t serverz-rootful \
@@ -87,10 +87,10 @@ publish:images:
         buildah push "$tag"
       done
 
-      buildah build \
-        --isolation=chroot \
-        --storage-driver=vfs \
-        --format=docker \
+      buildah bud \
+        --isolation chroot \
+        --storage-driver vfs \
+        --format docker \
         --pull \
         --target rootless \
         -t serverz-rootless \
