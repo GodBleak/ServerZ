@@ -1,4 +1,4 @@
-FROM oven/bun:1.3.14-debian AS runtime-base
+FROM docker.io/oven/bun:1.3.14-debian AS runtime-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
