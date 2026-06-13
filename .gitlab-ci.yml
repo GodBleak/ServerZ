@@ -8,6 +8,7 @@ default:
     - runner-please
 
 variables:
+  FF_NETWORK_PER_BUILD: "1"
   DOCKER_BUILDKIT: "1"
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_TLS_CERTDIR: ""
