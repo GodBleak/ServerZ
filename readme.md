@@ -13,7 +13,7 @@ ServerZ is a DayZ server wrapper made for running DayZ in containerized environm
 
 > 🔵 **Note:** By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment variable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
 
-### Docker
+### Docker/Podman run
 
 Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data. You'll want to ensure you have all 3 layer directories (see [Persistence and OverlayFS](#persistence-and-overlayfs) below) and the steam directory created beforehand.
 
@@ -31,10 +31,9 @@ docker run -d -P \
 
 ### Docker Compose
 
-Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data. Replace `your_steam_username`, `your_steam_password`, and `your_steam_guard_code` with your Steam credentials and Steam Guard code.
+Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data.
 
 ```yaml
-version: "3.7"
 services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
@@ -99,6 +98,72 @@ bun run dev
 ```bash
 bun start
 ```
+
+## Logging into Steam
+Unless you're using the DayZ Experimental server build without Workshop content, you'll need to authenticate with Steam to download the server and workshop items. Previously, this meant providing your Steam credentials through environment variables. However, this is no longer the only option, nor is it the recommended option. 
+
+### QR Login (Recommended)
+By default, ServerZ now uses QR Code login. On startup you'll see something like this printed in the container logs:
+
+```
+[2025-12-12T00:00:00.000Z] [ServerZ] [INFO] Mounted overlayFS at /dayz/223350
+[2025-12-12T00:00:00.000Z] [ServerZ] [INFO] QR code challenge received. Please scan the following QR code with your Steam mobile app to log in:
+[2025-12-12T00:00:00.000Z] [ServerZ] [INFO] QR Challenge URL: https://s.team/q/1/12345678912345678912
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █ ▄▄ ████▄▄▀█ █ ▄▄▄▄▄ █
+█ █   █ ██▄█▀▀ █   ▄█ █ █   █ █
+█ █▄▄▄█ █ ▀▀▄ ▄██ ▄▀█▄█ █▄▄▄█ █
+█▄▄▄▄▄▄▄█ ▀▄█▄█ ▀ █ ▀▄█▄▄▄▄▄▄▄█
+█   ██ ▄█ ▄█▄ █  ██  █▄  ▄██  █
+█▀▄ ▀█▀▄▄▀▄ ▀ █▄  ██▄█ ▄▀▄ ▄█▄█
+██▀▀ ▀█▄ ▄▄ ██ ▄ ██  ██  ███▀ █
+█▄▄█ █▀▄█▀█ ▄█▀█▄▀█▀ ▀▀█ ▄███▄█
+█▄  ▄▀ ▄▄▄▀▀▄ ▄█ █▀ ▀▄▄ ▀██▀▀ █
+█▄▄▄▄█▄▄▀▀▄▀▀ ▄ ▄ ▄▄▄█▀▀ ▀▄██▄█
+█▄▄▄▄▄▄▄█▀█▄██   █▀   ▄▄▄  ▀▄▀█
+█ ▄▄▄▄▄ █▀▀█▄█▀█ █▄ █ █▄█ ██▀ █
+█ █   █ ███▀▄ ▄█ ██    ▄▄  ▀█ █
+█ █▄▄▄█ █ ▄▀▀ ▄  ▄▄ █▀██  ▀█▄▄█
+█▄▄▄▄▄▄▄█▄▄▄██▄▄▄██▄▄▄█▄▄▄███▄█
+```
+Open the Steam app ([Android](https://play.google.com/store/apps/details?id=com.valvesoftware.android.steam.community)|[iOS](https://apps.apple.com/app/steam-mobile/id495369748)) and [scan](https://help.steampowered.com/en/faqs/view/7EFD-3CAE-64D3-1C31#qrlogin) the QR shown in your logs.
+
+### Username & Password (Strongly discouraged)
+Should QR Login not work for you, ServerZ still supports logging in by passing your credentials through environment variables, for example:
+```yaml
+services:
+  serverz:
+    image: registry.godbleak.dev/godbleak/serverz:latest
+    restart: unless-stopped
+    environment:
+      STEAM_USERNAME: "Survivor" # your steam username here
+      STEAM_PASSWORD: "!nf3ct3d" # your steam password here
+    volumes:
+      - "/path/to/persistent/data/directory:/data"
+      - "/path/to/persistent/overrides/directory:/overrides"
+      - "/path/to/persistent/install/directory:/install"
+      - "/path/to/persistent/steam/directory:/root/.steam"
+    ports:
+      - 2302:2302/udp
+      - 27015:27015/udp
+```
+### Anonymous
+If you're using the experimental server, you do not need to login. If you have saved credentials, and wish to login anonymously without losing those saved credentials, set `STEAM_USERNAME` to "anonymous". 
+
+### Persisting credentials
+However you logged in, to ensure you don't need to do so again every time the container is recreated or if you want to share the saved credentials between servers, bind mount `/root/.steam` to somewhere on your host, like: 
+```bash
+docker run -d \
+    -v "/path/to/persistent/data/directory:/data" \
+    -v "/path/to/persistent/overrides/directory:/overrides" \
+    -v "/path/to/persistent/install/directory:/install" \
+    -v "/path/to/persistent/steam/directory:/root/.steam" \
+    -p 2302:2302/udp \
+    -p 27015:27015/udp \
+    --restart unless-stopped \
+    registry.godbleak.dev/godbleak/serverz:latest
+```
+> 🔵 **Note:** If you used Username & Password to login, you should remove `STEAM_PASSWORD` from the compose file or docker run command. Subsequent containers/restarts should not need `STEAM_PASSWORD`; saved credentials will be reused from `/root/.steam`. You may leave `STEAM_USERNAME` set to make the intended account explicit.
 
 ## Environment Variables
 
@@ -212,7 +277,6 @@ Finally, you'll need to set the `TEMPLATE` environment variable to the name of t
 For example, to run a server on the [Namalsk](https://www.nightstalkers.cz/namalsk-sa/) map, downloaded from the workshop (with the "Namalsk Survival (server)" item) you could use the following docker-compose file:
 
 ```yaml
-version: "3.7"
 services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
@@ -225,7 +289,6 @@ services:
     environment:
       MOD_LIST: "[1559212036,2288339650,2288336145]" # CF, Namalsk Island (server), Namalsk Survival (server)
       MISSION_PATH: /dayz/223350/steamapps/workshop/content/221100/2288336145/Extras/Regular/regular.namalsk
-      COPY_MISSION: true
       TEMPLATE: regular.namalsk
     ports:
       - 2302:2302/udp
@@ -235,7 +298,6 @@ services:
 To run a server on the [Banov](https://steamcommunity.com/sharedfiles/filedetails/?id=2415195639) map, downloaded from a git repository, you could use the following docker-compose file:
 
 ```yaml
-version: "3.7"
 services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
