@@ -12,7 +12,7 @@ RUN apt update && apt -y install --no-install-recommends \
     util-linux \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /serverz /dayz /install /overrides /data /profiles
+RUN mkdir -p /serverz /dayz /install /overrides /data /root/.steam
 
 WORKDIR /serverz
 
