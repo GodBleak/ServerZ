@@ -13,7 +13,7 @@ variables:
 
 check:typescript:
   stage: check
-  image: oven/bun:1.3.14
+  image: docker.io/oven/bun:1.3.14
 
   script:
     - bun install --frozen-lockfile
@@ -37,6 +37,7 @@ publish:images:
 
   before_script:
     - buildah version
+    - buildah info
     - printf '%s' "$CI_REGISTRY_PASSWORD" | buildah login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
     - printf '%s' "$GHCR_TOKEN" | buildah login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 
@@ -72,13 +73,29 @@ publish:images:
         "
       fi
 
-      buildah build --pull --target rootful -t serverz-rootful .
+      buildah build \
+        --isolation=chroot \
+        --storage-driver=vfs \
+        --format=docker \
+        --pull \
+        --target rootful \
+        -t serverz-rootful \
+        .
+
       for tag in $ROOTFUL_TAGS; do
         buildah tag serverz-rootful "$tag"
         buildah push "$tag"
       done
 
-      buildah build --pull --target rootless -t serverz-rootless .
+      buildah build \
+        --isolation=chroot \
+        --storage-driver=vfs \
+        --format=docker \
+        --pull \
+        --target rootless \
+        -t serverz-rootless \
+        .
+
       for tag in $ROOTLESS_TAGS; do
         buildah tag serverz-rootless "$tag"
         buildah push "$tag"
@@ -86,7 +103,7 @@ publish:images:
 
 mirror:github:
   stage: mirror
-  image: alpine:latest
+  image: docker.io/library/alpine:latest
 
   variables:
     GIT_DEPTH: "0"
