@@ -217,7 +217,7 @@ export interface ServerZGeneratedConfig {
          */
         userXAttr?: boolean
         /**
-         * Wipe persistent server data before continuing startup. Set to `true` to perform the wipe and exit, or `dry-run` to log what would be removed without deleting anything.
+         * Wipe persistent server data before continuing startup. Set to `true` to perform the wipe, or `dry-run` to log what would be removed without deleting anything. After the wipe, the server will hang pending your intervention to unset this option and restart.
          * @env WIPE
          */
         wipe?: boolean | "dry-run"
@@ -239,7 +239,7 @@ export interface ServerZGeneratedConfig {
          */
         whitelist: string[]
         /**
-         * Character IDs banned from connecting when banlist is enabled.
+         * list of SteamID64s banned from connecting when banlist is enabled.
          * @default []
          * @env BANLIST
          */

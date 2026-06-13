@@ -40,18 +40,18 @@ The environment variables are split into three sections: **Meta**, **Server**, a
 | `COPY_MISSION` | `undefined` | **Deprecated.** When set to true, will copy the mission directory into `mpmissions`. This option is deprecated and will be removed in a future version. OverlayFS ensures all mission edits persist automatically. COPY_MISSION was a workaround for persistence that should no longer be needed. If OverlayFS doesn't replace this option for you, please let us know by creating an issue. See [readme.md#issues](../readme.md#issues) |
 | `COPY_MISSION_UP` | `undefined` | When `COPY_MISSION` is enabled, copy the mission into `OVERRIDES_DIRECTORY/mpmissions` instead of `INSTALL_DIRECTORY/mpmissions`. Useful when mission files should live with operator-managed overrides. |
 | `MAPS_PATH` | `${INSTALL_DIRECTORY}/maps` | The container path to download maps to. |
-| `MISSION_PATH` | `${SERVER_DIRECTORY}/mpmissions/${TEMPLATE}` | The container path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
+| `MISSION_PATH` | `${INSTALL_DIRECTORY}/mpmissions/${TEMPLATE}` | The container path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory. |
 | `UPDATE_MAP` | `false` | When set to true, will overwrite any existing map when the server starts. Warning: this may cause data loss. |
 | `EXIT_WITH_CHILD` | `true` | When **not set to false**, the server will exit when the child process (DayZServer) exits. |
 | `SHUTDOWN_TIMEOUT_MS` | `60000` | How long to wait after forwarding SIGTERM/SIGINT to DayZServer before resorting to SIGKILL. |
 | `USE_OVERLAYFS` | `true` | **Enable overlay behavior.** When `true`, the server directory (`SERVER_DIRECTORY`, usually `/dayz`) is built as an overlay of the base install (`INSTALL_DIRECTORY`) plus operator overrides (`OVERRIDES_DIRECTORY`). Writes by the DayZ server are captured to `DATA_DIRECTORY`. When `false`, the system falls back to _copy mode_: all files are copied from base + overrides into the server directory on startup. Writes by the server may not persist across restarts. |
 | `USE_FUSE` | `undefined` | **Choose overlay backend.** When `undefined`, ServerZ tries kernel OverlayFS first, then falls back to `fuse-overlayfs` if kernel mount fails. When `true`, ServerZ skips the kernel attempt and uses `fuse-overlayfs` directly (useful in rootless Docker/Podman). When `false`, ServerZ uses kernel OverlayFS only; if that fails, it falls back to copy mode instead of fuse. |
 | `USE_USERXATTR` | ``false` when rootful, `true` when rootless` | Use user xattrs for overlayfs. You probably don't need to change this. |
-| `WIPE` | `undefined` | Wipe persistent server data before continuing startup. Set to `true` to perform the wipe and exit, or `dry-run` to log what would be removed without deleting anything. |
+| `WIPE` | `undefined` | Wipe persistent server data before continuing startup. Set to `true` to perform the wipe, or `dry-run` to log what would be removed without deleting anything. After the wipe, the server will hang pending your intervention to unset this option and restart. |
 | `WIPE_INSTALL` | `false` | Also wipe `INSTALL_DIRECTORY` when `WIPE` is enabled. By default, wipes target persistent data and profiles without deleting the installed server files. |
 | `WIPE_TIMEOUT` | `30` | Timeout (in seconds) for the wipe process. It's discouraged to set this lower than the default. |
 | `WHITELIST` | `[]` | Character IDs allowed to connect when whitelist is enabled. |
-| `BANLIST` | `[]` | Character IDs banned from connecting when banlist is enabled. |
+| `BANLIST` | `[]` | list of SteamID64s banned from connecting when banlist is enabled. |
 | `STEAM_USERNAME` | `undefined` | The username for the Steam account to use for downloading the server and mods. User/password login is supported but discouraged; prefer QR code login & cached credentials. |
 | `STEAM_PASSWORD` | `undefined` | The password for the Steam account to use for downloading the server and mods. Discouraged except for bootstrapping credentials. |
 <!-- env-doc:meta:end -->
