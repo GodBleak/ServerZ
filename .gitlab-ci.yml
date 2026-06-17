@@ -18,6 +18,7 @@ check:typescript:
   script:
     - bun install --frozen-lockfile
     - bun run check:config-docs
+    - bun run check:licenses
     - bun run lint
     - bun run typecheck
     - bun run test

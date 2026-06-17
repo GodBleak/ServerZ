@@ -313,7 +313,7 @@ export const ServerZSchema = Type.Object(
       }),
       whitelist: Type.Array(
         Type.String({
-          pattern: "^[A-Za-z0-9_-]{44}$",
+          pattern: "^[A-Za-z0-9_-]{43}=$",
           errorMessage: {
             pattern: "Each whitelist entry must be a 44-character DayZ character ID. Ensure you're not using Steam IDs.",
           },

@@ -5,7 +5,7 @@ import type {
   DownloadWorkshopFileResult,
   ValidateAppOptions,
   ValidateAppResult
-} from '../depot-client/index.js'
+} from '../steamapi/depot-client/src/index.js'
 
 export type SteamContentEventName =
   | 'debug'

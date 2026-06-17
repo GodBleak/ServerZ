@@ -1,6 +1,6 @@
 import { config } from "#config"
 import { logger } from "#lib/logger"
-import { SteamAPI } from "#lib/steamapi"
+import { createSteamAPI } from "#lib/steamapi"
 import { hang } from "#lib/hang"
 import { Server } from "./server.js"
 import { overlay } from "./overlay.js"
@@ -9,8 +9,22 @@ import qrcode from "qrcode-terminal"
 import type { QrChallenge } from "depot-client/src/types.js"
 
 async function main() {
-  const steam = new SteamAPI(config.steam.configDirectory, `${config.steam.configDirectory}/auth`, "serverz", { onQRChallenge, loginTimeout: 60000 })
-  steam.on("debug", logger.scrub().debug)
+  const steam = createSteamAPI({
+    adapter: config.steam.steamApiAdapter,
+    dataDir: config.steam.configDirectory,
+    credentialsCacheDir: `${config.steam.configDirectory}/auth`,
+    machineName: "serverz",
+    loginTimeout: config.steam.steamContentTimeoutMs,
+    onQRChallenge,
+    remote: {
+      transport: config.steam.steamContentTransport,
+      socketPath: config.steam.steamContentSocket,
+      url: config.steam.steamContentUrl,
+      socketIoPath: config.steam.steamContentSocketIoPath,
+      timeoutMs: config.steam.steamContentTimeoutMs,
+    },
+  })
+  if (config.steam.echoMinorRemoteSteamDetails || config.steam.steamApiAdapter === "local") steam.on("debug", logger.scrub().debug)
   const server = new Server(steam)
 
   if (config.meta.wipe === true || config.meta.wipe === "dry-run") {

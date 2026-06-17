@@ -83,13 +83,20 @@ const downloadProfiles = {
 <!-- env-doc:steam:start -->
 | Variable | Default | Description |
 | --- | --- | --- |
+| `STEAM_API_ADAPTER` | `local` | Steam API adapter. `local` uses the embedded depot client; `remote` delegates Steam downloads to a depot-daemon instance. |
 | `STEAM_APP_ID` | `{APP_ID}` | The Steam App ID for DayZ Server |
-| `STEAM_APP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam app/server files |
-| `STEAM_WORKSHOP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam workshop items |
 | `STEAM_DOWNLOAD_DIRECTORY` | `INSTALL_DIRECTORY` | The directory where the server is installed. This should be bind-mounted to a persistent directory on the host. |
 | `STEAM_CONFIG_DIRECTORY` | `/root/.steam` | The directory where the Steam configuration is stored. Defaults to the value of `/root/.steam`. |
-| `STEAM_BRANCH` | `public` | The branch/beta name. |
-| `STEAM_BRANCH_PASSWORD` | `undefined` | Password for protected branches. |
+| `STEAM_CONTENT_TRANSPORT` | `uds` | Remote depot-daemon transport. Options: `uds`. |
+| `STEAM_CONTENT_SOCKET` | `/root/.steam/depot.sock` | Unix socket path for depot-daemon when `STEAM_API_ADAPTER=remote` and `STEAM_CONTENT_TRANSPORT=uds`. |
+| `STEAM_CONTENT_URL` | `http://depot-daemon.local` | Remote depot-daemon URL. For UDS, this is a fake origin routed through Bun's Unix-socket fetch support. |
+| `STEAM_CONTENT_SOCKET_IO_PATH` | `/socket.io/` | Socket.IO path exposed by depot-daemon. |
+| `STEAM_CONTENT_TIMEOUT_MS` | `60000` | Remote depot-daemon connection and request timeout in milliseconds. |
+| `ECHO_MINOR_REMOTE_STEAM_DETAILS` | `false` | Echo minor remote Steam details to the console, when connected to depot-daemon. |
+| `STEAM_APP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam app/server files |
+| `STEAM_WORKSHOP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam workshop items |
+| `STEAM_BRANCH` | `public` | Default branch/beta name. Clients may override this per request. |
+| `STEAM_BRANCH_PASSWORD` | `undefined` | Default password for protected branches. Clients may override this per request. |
 | `STEAM_OS` | `undefined` | Platform filter passed to depot resolution. |
 | `STEAM_ARCH` | `undefined` | Architecture filter passed to depot resolution. |
 | `STEAM_LANGUAGE` | `english` | Language filter passed to depot resolution. |
@@ -104,13 +111,13 @@ const downloadProfiles = {
 | `STEAM_BUN_CDN_FETCH_TIMEOUT_MS` | `15000` | Per-attempt CDN fetch timeout for `bun-cdn`. |
 | `STEAM_BUN_CDN_FALLBACK` | `false` | Fall back to `steam-user.downloadChunk()` when the native CDN chunk path fails. |
 | `STEAM_PROGRESS_INTERVAL_MS` | `500` | Minimum interval between emitted progress events from the depot client. |
-| `STEAM_PROGRESS_PRINT_INTERVAL_MS` | `1000` | Example stdout throttling. Not needed unless ServerZ has console progress rendering. |
+| `STEAM_PROGRESS_PRINT_INTERVAL_MS` | `1000` | Minimum interval between depot-daemon progress log lines. |
 | `STEAM_VERIFY_DOWNLOADED` | `full-file` | Verification policy for freshly downloaded files/chunks. `full-file` is safest; `chunks-only` avoids final full-file reads. |
 | `STEAM_VERIFY_EXISTING` | `true` | Hash existing matching files before skipping. |
 | `STEAM_REPAIR_INVALID_FILES` | `true` | Redownload missing/corrupt files found by validation. |
 | `STEAM_MAX_VALIDATION_REPAIR_ATTEMPTS` | `1` | Number of repair passes after validation failure. |
-| `STEAM_VALIDATE_CONCURRENT_FILES` | `8` | Validation-only file concurrency in example validator. |
-| `STEAM_VALIDATE_HASHES` | `true` | Validation-only hash checking in example validator. |
+| `STEAM_VALIDATE_CONCURRENT_FILES` | `8` | Validation-only file concurrency. |
+| `STEAM_VALIDATE_HASHES` | `true` | Validation-only hash checking. |
 | `STEAM_CDN_COMPRESSION` | `auto` | Compression strategy for `bun-cdn`. |
 | `STEAM_CDN_ZSTD_BACKEND` | `auto` | Zstd backend for VSZa chunks. |
 | `STEAM_CDN_LZMA_BACKEND` | `auto` | LZMA/VZip backend. `auto` prefers process-isolated ffi-liblzma under Bun when available. |

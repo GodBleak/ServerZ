@@ -174,7 +174,7 @@ export class Server {
    * Initializes the Steam session.
    */
   public async doSteamLogin() {
-    this.steam.on("appProgress", this.logSteamAppProgress)
+    if (config.steam.echoMinorRemoteSteamDetails || config.steam.steamApiAdapter === "local") this.steam.on("appProgress", this.logSteamAppProgress)
     await this.steam.login(config.steam.steamUsername, config.steam.steamPassword, config.steam.steamGuardCode)
   }
 

@@ -1,21 +1,62 @@
 import { Type, type Static } from "@sinclair/typebox"
 import { logger } from "../logger.js"
+import { DepotClientConfigSchema } from "../depot-daemon-shared/depot-client.config.schema.js"
+import {
+  downloadProfiles,
+  steamProfileDefaults,
+  type DepotClientConfig,
+  type SteamDownloadProfile,
+  type SteamProfileManagedKey,
+} from "../depot-daemon-shared/index.js"
 
-const SteamDownloadProfileSchema = [Type.Literal("safe"), Type.Literal("medium"), Type.Literal("fast")]
-export const AppDownloadProfileSchema = Type.Union(SteamDownloadProfileSchema, {
-  description: "Download profile for Steam app/server files",
-  default: "fast",
-  env: "STEAM_APP_DOWNLOAD_PROFILE",
+export type { DepotClientConfig, SteamDownloadProfile, SteamProfileManagedKey }
+export { DepotClientConfigSchema }
+
+export const SteamAPIAdapterSchema = Type.Union([Type.Literal("local"), Type.Literal("remote")], {
+  description: "Steam API adapter. `local` uses the embedded depot client; `remote` delegates Steam downloads to a depot-daemon instance.",
+  default: "local",
+  env: "STEAM_API_ADAPTER",
 })
-export const WorkshopDownloadProfileSchema = Type.Union(SteamDownloadProfileSchema, {
-  description: "Download profile for Steam workshop items",
-  default: "fast",
-  env: "STEAM_WORKSHOP_DOWNLOAD_PROFILE",
+
+export const SteamContentTransportSchema = Type.Union([Type.Literal("uds"), Type.Literal("tcp")], {
+  description: "Remote depot-daemon transport. Options: `uds`.",
+  default: "uds",
+  env: "STEAM_CONTENT_TRANSPORT",
 })
 
-export type SteamDownloadProfile = Static<typeof AppDownloadProfileSchema>
+export const SteamRemoteConfigSchema = Type.Object({
+  steamContentTransport: SteamContentTransportSchema,
+  steamContentSocket: Type.String({
+    env: "STEAM_CONTENT_SOCKET",
+    default: "/root/.steam/depot.sock",
+    description: "Unix socket path for depot-daemon when `STEAM_API_ADAPTER=remote` and `STEAM_CONTENT_TRANSPORT=uds`.",
+  }),
+  steamContentUrl: Type.String({
+    env: "STEAM_CONTENT_URL",
+    default: "http://depot-daemon.local",
+    description: "Remote depot-daemon URL. For UDS, this is a fake origin routed through Bun's Unix-socket fetch support.",
+  }),
+  steamContentSocketIoPath: Type.String({
+    env: "STEAM_CONTENT_SOCKET_IO_PATH",
+    default: "/socket.io/",
+    description: "Socket.IO path exposed by depot-daemon.",
+  }),
+  steamContentTimeoutMs: Type.Number({
+    env: "STEAM_CONTENT_TIMEOUT_MS",
+    default: 60000,
+    description: "Remote depot-daemon connection and request timeout in milliseconds.",
+  }),
+  echoMinorRemoteSteamDetails: Type.Optional(
+    Type.Boolean({
+      env: "ECHO_MINOR_REMOTE_STEAM_DETAILS",
+      default: false,
+      description: "Echo minor remote Steam details to the console, when connected to depot-daemon.",
+    })
+  ),
+})
 
-export const SteamConfigSchema = Type.Object({
+export const SteamServerZConfigSchema = Type.Object({
+  steamApiAdapter: SteamAPIAdapterSchema,
   steamUsername: Type.Optional(
     Type.String({
       env: "STEAM_USERNAME",
@@ -41,16 +82,12 @@ export const SteamConfigSchema = Type.Object({
       description: "The Steam Guard code/token for bootstrapping a Steam login when required.",
     })
   ),
-
   appID: Type.Number({
     env: "STEAM_APP_ID",
     defaultDoc: "`{APP_ID}`",
     noDefault: true,
     description: "The Steam App ID for DayZ Server",
   }),
-  appDownloadProfile: AppDownloadProfileSchema,
-  workshopDownloadProfile: WorkshopDownloadProfileSchema,
-
   downloadDirectory: Type.String({
     env: "STEAM_DOWNLOAD_DIRECTORY",
     defaultDoc: "`INSTALL_DIRECTORY`",
@@ -61,212 +98,12 @@ export const SteamConfigSchema = Type.Object({
     default: "/root/.steam",
     env: "STEAM_CONFIG_DIRECTORY",
   }),
-  branch: Type.String({
-    env: "STEAM_BRANCH",
-    default: "public",
-    description: "The branch/beta name.",
-  }),
-  branchPassword: Type.Optional(
-    Type.String({
-      env: "STEAM_BRANCH_PASSWORD",
-      defaultDoc: "`undefined`",
-      description: "Password for protected branches.",
-    })
-  ),
-  os: Type.Optional(
-    Type.String({
-      env: "STEAM_OS",
-      defaultDoc: "`undefined`",
-      description: "Platform filter passed to depot resolution.",
-    })
-  ),
-  arch: Type.Optional(
-    Type.String({
-      env: "STEAM_ARCH",
-      defaultDoc: "`undefined`",
-      description: "Architecture filter passed to depot resolution.",
-    })
-  ),
-  language: Type.String({
-    env: "STEAM_LANGUAGE",
-    default: "english",
-    description: "Language filter passed to depot resolution.",
-  }),
-  workshopIncludeChildren: Type.Boolean({
-    env: "STEAM_WORKSHOP_INCLUDE_CHILDREN",
-    default: true,
-    description: "Include child/dependency workshop items.",
-  }),
-  workshopSeparateItemDirectories: Type.Boolean({
-    env: "STEAM_WORKSHOP_SEPARATE_ITEM_DIRS",
-    default: true,
-    description: "Keep each workshop item in a separate directory.",
-  }),
-  workshopCycleMode: Type.Union([Type.Literal("skip"), Type.Literal("throw")], {
-    env: "STEAM_WORKSHOP_CYCLE_MODE",
-    default: "skip",
-    description: "Behavior when workshop dependencies contain cycles.",
-  }),
-
-  downloadBackend: Type.Union([Type.Literal("bun-cdn"), Type.Literal("managed-chunks"), Type.Literal("steam-user-file")], {
-    env: "STEAM_DOWNLOAD_BACKEND",
-    default: "bun-cdn",
-    description: "Download backend. `bun-cdn` is the native fast path.",
-  }),
-  maxConcurrentChunks: Type.Number({
-    env: "STEAM_MAX_CONCURRENT_CHUNKS",
-    default: 32,
-    description: "Max concurrent chunks per depot for `bun-cdn`/`managed-chunks`.",
-  }),
-  maxConcurrentDepots: Type.Number({
-    env: "STEAM_MAX_CONCURRENT_DEPOTS",
-    default: 3,
-    description: "Max depots processed concurrently.",
-  }),
-  maxConcurrentFiles: Type.Number({
-    env: "STEAM_MAX_CONCURRENT_FILES",
-    default: 6,
-    description: "Max files for `steam-user-file` backend; less relevant for `bun-cdn`.",
-  }),
-  maxOpenFileHandles: Type.Number({
-    env: "STEAM_MAX_OPEN_FILE_HANDLES",
-    default: 64,
-    description: "Max simultaneously open output file handles for managed chunk writing.",
-  }),
-  bunCdnFetchTimeoutMs: Type.Number({
-    env: "STEAM_BUN_CDN_FETCH_TIMEOUT_MS",
-    default: 15000,
-    description: "Per-attempt CDN fetch timeout for `bun-cdn`.",
-  }),
-  bunCdnFallbackToSteamUser: Type.Boolean({
-    env: "STEAM_BUN_CDN_FALLBACK",
-    default: false,
-    description: "Fall back to `steam-user.downloadChunk()` when the native CDN chunk path fails.",
-  }),
-  progressIntervalMs: Type.Number({
-    env: "STEAM_PROGRESS_INTERVAL_MS",
-    default: 500,
-    description: "Minimum interval between emitted progress events from the depot client.",
-  }),
-  progressPrintIntervalMs: Type.Number({
-    env: "STEAM_PROGRESS_PRINT_INTERVAL_MS",
-    default: 1000,
-    description: "Example stdout throttling. Not needed unless ServerZ has console progress rendering.",
-  }),
-  verifyDownloaded: Type.Union([Type.Literal("full-file"), Type.Literal("chunks-only"), Type.Literal("none")], {
-    env: "STEAM_VERIFY_DOWNLOADED",
-    default: "full-file",
-    description: "Verification policy for freshly downloaded files/chunks. `full-file` is safest; `chunks-only` avoids final full-file reads.",
-  }),
-  verifyExisting: Type.Optional(
-    Type.Boolean({
-      env: "STEAM_VERIFY_EXISTING",
-      default: true,
-      description: "Hash existing matching files before skipping.",
-    })
-  ),
-  repairInvalidFiles: Type.Optional(
-    Type.Boolean({
-      env: "STEAM_REPAIR_INVALID_FILES",
-      default: true,
-      description: "Redownload missing/corrupt files found by validation.",
-    })
-  ),
-  maxValidationRepairAttempts: Type.Number({
-    env: "STEAM_MAX_VALIDATION_REPAIR_ATTEMPTS",
-    default: 1,
-    description: "Number of repair passes after validation failure.",
-  }),
-  validateConcurrentFiles: Type.Number({
-    env: "STEAM_VALIDATE_CONCURRENT_FILES",
-    default: 8,
-    description: "Validation-only file concurrency in example validator.",
-  }),
-  validateHashes: Type.Boolean({
-    env: "STEAM_VALIDATE_HASHES",
-    default: true,
-    description: "Validation-only hash checking in example validator.",
-  }),
-
-  bunCdnCompression: Type.Union([Type.Literal("auto"), Type.Literal("steam-user")], {
-    env: "STEAM_CDN_COMPRESSION",
-    default: "auto",
-    description: "Compression strategy for `bun-cdn`.",
-  }),
-  bunCdnZstdBackend: Type.Union([Type.Literal("auto"), Type.Literal("zstddec"), Type.Literal("mongodb-zstd"), Type.Literal("steam-user")], {
-    env: "STEAM_CDN_ZSTD_BACKEND",
-    default: "auto",
-    description: "Zstd backend for VSZa chunks.",
-  }),
-  bunCdnLzmaBackend: Type.Union(
-    [
-      Type.Literal("auto"),
-      Type.Literal("ffi-liblzma"),
-      Type.Literal("ffi-liblzma-process"),
-      Type.Literal("ffi-liblzma-worker"),
-      Type.Literal("zig-wasm"),
-      Type.Literal("lzma-native"),
-      Type.Literal("lzma"),
-      Type.Literal("steam-user"),
-    ],
-    {
-      env: "STEAM_CDN_LZMA_BACKEND",
-      default: "auto",
-      description: "LZMA/VZip backend. `auto` prefers process-isolated ffi-liblzma under Bun when available.",
-    }
-  ),
-  bunExecutable: Type.Optional(
-    Type.String({
-      env: "STEAM_BUN_EXECUTABLE",
-      defaultDoc: "`undefined`",
-      description: "Bun executable used by process-isolated ffi-liblzma workers, especially when main process is not Bun.",
-    })
-  ),
-  ffiLzmaWorkers: Type.Optional(
-    Type.Number({
-      env: "STEAM_FFI_LZMA_WORKERS",
-      defaultDoc: "`undefined`",
-      description: "Process/worker count for ffi-liblzma decompression.",
-    })
-  ),
-  ffiLzmaProcessRetries: Type.Number({
-    env: "STEAM_FFI_LZMA_PROCESS_RETRIES",
-    default: 2,
-    description: "Retry count for process-isolated ffi-liblzma jobs after worker crashes.",
-  }),
-  ffiLzmaLibraryPath: Type.Optional(
-    Type.String({
-      env: "STEAM_FFI_LZMA_LIBRARY_PATH",
-      defaultDoc: "`undefined`",
-      description: "Explicit path to `libsteam_lzma`.",
-    })
-  ),
-  ffiLzmaMemlimitBytes: Type.Optional(
-    Type.Number({
-      env: "STEAM_FFI_LZMA_MEMLIMIT_BYTES",
-      defaultDoc: "`undefined`",
-      description: "liblzma memory limit. Raise if VZip decompression reports memory-limit failures.",
-    })
-  ),
-  nodeExecutable: Type.String({
-    env: "STEAM_NODE_EXECUTABLE",
-    default: "node",
-    description: "Node executable used by the Node/lzma-native worker backend. Mostly irrelevant under Bun unless that backend is selected.",
-  }),
-  lzmaNativeRequirePath: Type.String({
-    env: "STEAM_LZMA_NATIVE_REQUIRE_PATH",
-    default: "lzma-native",
-    description: "Require path used inside Node lzma-native workers. Internal/advanced.",
-  }),
 })
 
-export type SteamConfig = Static<typeof SteamConfigSchema>
-export type SteamProfileManagedKey = keyof Pick<
-  SteamConfig,
-  "downloadBackend" | "maxConcurrentChunks" | "maxConcurrentDepots" | "maxConcurrentFiles" | "maxOpenFileHandles" | "bunCdnFetchTimeoutMs"
->
+export const SteamConfigSchema = Type.Intersect([SteamServerZConfigSchema, SteamRemoteConfigSchema, DepotClientConfigSchema])
 
-const downloadProfiles = ["safe", "medium", "fast"] as const
+export type SteamConfig = Static<typeof SteamServerZConfigSchema> & Static<typeof SteamRemoteConfigSchema> & DepotClientConfig
+
 const steamProfileManagedKeys = [
   "downloadBackend",
   "maxConcurrentChunks",
@@ -275,32 +112,6 @@ const steamProfileManagedKeys = [
   "maxOpenFileHandles",
   "bunCdnFetchTimeoutMs",
 ] as const satisfies readonly SteamProfileManagedKey[]
-const steamProfileDefaults: Record<SteamDownloadProfile, Pick<SteamConfig, SteamProfileManagedKey>> = {
-  safe: {
-    downloadBackend: "bun-cdn",
-    maxConcurrentChunks: 8,
-    maxConcurrentDepots: 1,
-    maxConcurrentFiles: 2,
-    maxOpenFileHandles: 16,
-    bunCdnFetchTimeoutMs: 30000,
-  },
-  medium: {
-    downloadBackend: "bun-cdn",
-    maxConcurrentChunks: 16,
-    maxConcurrentDepots: 2,
-    maxConcurrentFiles: 4,
-    maxOpenFileHandles: 32,
-    bunCdnFetchTimeoutMs: 20000,
-  },
-  fast: {
-    downloadBackend: "bun-cdn",
-    maxConcurrentChunks: 32,
-    maxConcurrentDepots: 3,
-    maxConcurrentFiles: 6,
-    maxOpenFileHandles: 64,
-    bunCdnFetchTimeoutMs: 15000,
-  },
-}
 
 export function resolveSteamDownloadProfile(value: unknown, defaultProfile: SteamDownloadProfile): SteamDownloadProfile {
   if (typeof value === "string" && downloadProfiles.includes(value as SteamDownloadProfile)) return value as SteamDownloadProfile

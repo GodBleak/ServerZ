@@ -1,4 +1,4 @@
-import { Type, type Static } from '@feathersjs/typebox'
+import { Type, type Static } from '@sinclair/typebox'
 
 const SteamDownloadProfileSchema = [Type.Literal('safe'), Type.Literal('medium'), Type.Literal('fast')]
 

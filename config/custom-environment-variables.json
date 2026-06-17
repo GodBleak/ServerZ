@@ -386,6 +386,15 @@
             "password": "BE_PASSWORD"
         },
         "steam": {
+            "steamApiAdapter": "STEAM_API_ADAPTER",
+            "steamContentTransport": "STEAM_CONTENT_TRANSPORT",
+            "steamContentSocket": "STEAM_CONTENT_SOCKET",
+            "steamContentUrl": "STEAM_CONTENT_URL",
+            "steamContentSocketIoPath": "STEAM_CONTENT_SOCKET_IO_PATH",
+            "steamContentTimeoutMs": {
+                "__name": "STEAM_CONTENT_TIMEOUT_MS",
+                "__format": "number"
+            },
             "steamUsername": "STEAM_USERNAME",
             "steamPassword": "STEAM_PASSWORD",
             "steamGuardCode": "STEAM_GUARD_CODE",
@@ -483,7 +492,11 @@
                 "__format": "number"
             },
             "nodeExecutable": "STEAM_NODE_EXECUTABLE",
-            "lzmaNativeRequirePath": "STEAM_LZMA_NATIVE_REQUIRE_PATH"
+            "lzmaNativeRequirePath": "STEAM_LZMA_NATIVE_REQUIRE_PATH",
+            "echoMinorRemoteSteamDetails": {
+                "__name": "ECHO_MINOR_REMOTE_STEAM_DETAILS",
+                "__format": "boolean"
+            }
         }
     }
 }

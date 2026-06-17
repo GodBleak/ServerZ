@@ -67,6 +67,12 @@
         },
         "battleye": {},
         "steam": {
+            "steamApiAdapter": "local",
+            "steamContentTransport": "uds",
+            "steamContentSocket": "/root/.steam/depot.sock",
+            "steamContentUrl": "http://depot-daemon.local",
+            "steamContentSocketIoPath": "/socket.io/",
+            "steamContentTimeoutMs": 60000,
             "appDownloadProfile": "fast",
             "workshopDownloadProfile": "fast",
             "configDirectory": "/root/.steam",
@@ -95,7 +101,8 @@
             "bunCdnLzmaBackend": "auto",
             "ffiLzmaProcessRetries": 2,
             "nodeExecutable": "node",
-            "lzmaNativeRequirePath": "lzma-native"
+            "lzmaNativeRequirePath": "lzma-native",
+            "echoMinorRemoteSteamDetails": false
         }
     }
 }

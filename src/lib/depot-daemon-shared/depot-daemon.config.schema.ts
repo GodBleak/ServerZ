@@ -1,4 +1,4 @@
-import { Type, type Static } from '@feathersjs/typebox'
+import { Type, type Static } from '@sinclair/typebox'
 import { DepotClientConfigSchema, type DepotClientConfig } from './depot-client.config.schema.js'
 
 export const DepotDaemonTransportSchema = Type.Union([Type.Literal('uds'), Type.Literal('tcp')], {

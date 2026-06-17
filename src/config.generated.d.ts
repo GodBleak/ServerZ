@@ -629,6 +629,12 @@ export interface ServerZGeneratedConfig {
     }
     steam: {
         /**
+         * Steam API adapter. `local` uses the embedded depot client; `remote` delegates Steam downloads to a depot-daemon instance.
+         * @default "local"
+         * @env STEAM_API_ADAPTER
+         */
+        steamApiAdapter: "local" | "remote"
+        /**
          * The username for the Steam account to use for downloading the server and mods. User/password login is supported but discouraged; prefer QR code login & cached credentials.
          * @env STEAM_USERNAME
          */
@@ -649,6 +655,52 @@ export interface ServerZGeneratedConfig {
          */
         appID: number
         /**
+         * The directory where the server is installed. This should be bind-mounted to a persistent directory on the host.
+         * @env STEAM_DOWNLOAD_DIRECTORY
+         */
+        downloadDirectory: string
+        /**
+         * The directory where the Steam configuration is stored. Defaults to the value of `/root/.steam`.
+         * @default "/root/.steam"
+         * @env STEAM_CONFIG_DIRECTORY
+         */
+        configDirectory: string
+        /**
+         * Remote depot-daemon transport. Options: `uds`.
+         * @default "uds"
+         * @env STEAM_CONTENT_TRANSPORT
+         */
+        steamContentTransport: "uds" | "tcp"
+        /**
+         * Unix socket path for depot-daemon when `STEAM_API_ADAPTER=remote` and `STEAM_CONTENT_TRANSPORT=uds`.
+         * @default "/root/.steam/depot.sock"
+         * @env STEAM_CONTENT_SOCKET
+         */
+        steamContentSocket: string
+        /**
+         * Remote depot-daemon URL. For UDS, this is a fake origin routed through Bun's Unix-socket fetch support.
+         * @default "http://depot-daemon.local"
+         * @env STEAM_CONTENT_URL
+         */
+        steamContentUrl: string
+        /**
+         * Socket.IO path exposed by depot-daemon.
+         * @default "/socket.io/"
+         * @env STEAM_CONTENT_SOCKET_IO_PATH
+         */
+        steamContentSocketIoPath: string
+        /**
+         * Remote depot-daemon connection and request timeout in milliseconds.
+         * @default 60000
+         * @env STEAM_CONTENT_TIMEOUT_MS
+         */
+        steamContentTimeoutMs: number
+        /**
+         * Echo minor remote Steam details to the console, when connected to depot-daemon.
+         * @env ECHO_MINOR_REMOTE_STEAM_DETAILS
+         */
+        echoMinorRemoteSteamDetails?: boolean
+        /**
          * Download profile for Steam app/server files
          * @default "fast"
          * @env STEAM_APP_DOWNLOAD_PROFILE
@@ -661,24 +713,13 @@ export interface ServerZGeneratedConfig {
          */
         workshopDownloadProfile: "safe" | "medium" | "fast"
         /**
-         * The directory where the server is installed. This should be bind-mounted to a persistent directory on the host.
-         * @env STEAM_DOWNLOAD_DIRECTORY
-         */
-        downloadDirectory: string
-        /**
-         * The directory where the Steam configuration is stored. Defaults to the value of `/root/.steam`.
-         * @default "/root/.steam"
-         * @env STEAM_CONFIG_DIRECTORY
-         */
-        configDirectory: string
-        /**
-         * The branch/beta name.
+         * Default branch/beta name. Clients may override this per request.
          * @default "public"
          * @env STEAM_BRANCH
          */
         branch: string
         /**
-         * Password for protected branches.
+         * Default password for protected branches. Clients may override this per request.
          * @env STEAM_BRANCH_PASSWORD
          */
         branchPassword?: string
@@ -764,7 +805,7 @@ export interface ServerZGeneratedConfig {
          */
         progressIntervalMs: number
         /**
-         * Example stdout throttling. Not needed unless ServerZ has console progress rendering.
+         * Minimum interval between depot-daemon progress log lines.
          * @default 1000
          * @env STEAM_PROGRESS_PRINT_INTERVAL_MS
          */
@@ -794,13 +835,13 @@ export interface ServerZGeneratedConfig {
          */
         maxValidationRepairAttempts: number
         /**
-         * Validation-only file concurrency in example validator.
+         * Validation-only file concurrency.
          * @default 8
          * @env STEAM_VALIDATE_CONCURRENT_FILES
          */
         validateConcurrentFiles: number
         /**
-         * Validation-only hash checking in example validator.
+         * Validation-only hash checking.
          * @default true
          * @env STEAM_VALIDATE_HASHES
          */
