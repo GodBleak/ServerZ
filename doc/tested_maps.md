@@ -47,7 +47,7 @@ cp testing/install/@Namalsk\ Survival/meta.cpp testing/overrides/@Namalsk\ Survi
 
 `2289456201` and `2289456202` were then removed from `MOD_LIST`, and and the server was restarted with `CLEAN_MODS` was set to `true` to remove the client mods. Afterwards `CLEAN_MODS` and `START_DAYZ_SERVER` were unset. The final config was:
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -72,7 +72,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -99,7 +99,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -130,7 +130,7 @@ Doesn't work without renaming the mission directory. Because the project is lice
 
 Simply renaming the mission directory, while possible, would require advising you to modify the directory within `mpmissions` within the `INSTALL_DIRECTORY`. Which defeats the purpose of the `INSTALL_DIRECTORY` being ephemeral and may break at any time.
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -157,7 +157,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -186,7 +186,7 @@ services:
 
 See reasoning in [Rostow](#rostow-). Same issue.
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -213,7 +213,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -240,7 +240,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -267,7 +267,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -296,7 +296,7 @@ services:
 
 Fails to launch.
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -329,7 +329,7 @@ ServerZ has no way to obtain the server files. Packaged in a unsupported format.
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -355,7 +355,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -389,7 +389,7 @@ mkdir -p testing/overrides/mpmissions/dayzOffline.Yiprit/storage_1
 touch testing/overrides/mpmissions/dayzOffline.Yiprit/storage_1/.wh..wh.opq
 ```
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -416,7 +416,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -443,7 +443,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -469,7 +469,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
@@ -496,7 +496,7 @@ services:
 
 ![Tested on 15-09-2025](https://img.shields.io/badge/Tested-15--09--2025-green)
 
-```YAML
+```yaml
 services:
   ServerZ:
     image: registry.godbleak.dev/godbleak/serverz:beta-rootless
