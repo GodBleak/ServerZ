@@ -27,6 +27,8 @@ import type { SteamAPI } from "./types.js"
 
 type SteamContentSocketService = SocketService & SteamContentServiceClient
 
+const STEAM_CONTENT_SERVICE_METHODS = ["login", "updateApp", "verify", "workshopDownload"] as const
+
 type ServiceTypes = {
   steam: SteamContentSocketService
 }
@@ -84,7 +86,8 @@ export class RemoteSteamAPI extends EventEmitter implements SteamAPI {
     this.app = feathers<ServiceTypes>()
     const socketConnection = socketioClient(this.socket, { timeout: this.timeoutMs })
     this.app.configure(socketConnection)
-    this.steamService = socketConnection.service("steam") as unknown as SteamContentSocketService
+    this.app.use("steam", socketConnection.service("steam") as unknown as SteamContentSocketService, { methods: [...STEAM_CONTENT_SERVICE_METHODS] })
+    this.steamService = this.app.service("steam") as unknown as SteamContentSocketService
 
     this.socket.on("connect", () => this.emit("debug", `Connected to Steam content daemon using ${this.socket.io.engine.transport.name}`))
     this.socket.on("disconnect", (reason) => this.emit("disconnected", undefined, `Steam content daemon disconnected: ${reason}`))
