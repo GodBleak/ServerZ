@@ -208,12 +208,12 @@ export const ServerZSchema = Type.Object(
       }),
       mapURL: Type.Optional(
         Type.String({
-          format: "uri",
+          pattern: "^(?:@|https?://)",
           env: "MAP_URL",
           defaultDoc: "undefined",
           description: "The URL to download the map from. If set, ServerZ will download the map from the URL and symlink it into `MAPS_PATH`.",
           errorMessage: {
-            format: "MAP_URL must be a valid URI",
+            format: "MAP_URL must be a valid URI or @{modID}-relative path",
           },
         })
       ),
