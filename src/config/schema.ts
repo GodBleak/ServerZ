@@ -877,7 +877,7 @@ export const ServerZSchema = Type.Object(
         /*
           The validation below ensuring the pattern `<fs-safe-string>.<fs-safe-string>` is a DayZ constraint.
           While the character set may be up for debate, the enforcement of a `.` surrounded by characters is not.
-          Do not relax the pattern to allow `TEMPLATE` values that don't container a `.`.
+          Do not relax the pattern to allow `TEMPLATE` values that don't contain a `.`.
           Source: https://community.bistudio.com/wiki/DayZ:Central_Economy_setup_for_custom_terrains#Mission_files:~:text=It%20is%20essential%20to%20follow%20this%20naming%20convention%20mission_name%2Eterrain_name%2E
         */
         pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$",
