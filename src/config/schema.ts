@@ -874,6 +874,7 @@ export const ServerZSchema = Type.Object(
         })
       ),
       template: Type.String({
+        pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$",
         env: "TEMPLATE",
         default: "dayzOffline.chernarusplus",
         description: "Mission to load on server startup. <MissionName>.<TerrainName>",
