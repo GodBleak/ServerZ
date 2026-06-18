@@ -245,14 +245,14 @@ export const ServerZSchema = Type.Object(
         },
       }),
       missionPath: Type.String({
-        pattern: "^/",
+        pattern: "^[/@]",
         env: "MISSION_PATH",
         defaultDoc: "`${INSTALL_DIRECTORY}/mpmissions/${TEMPLATE}`",
         default: "mpmissions/dayzOffline.chernarusplus",
         description:
           "The container path to the mission directory to symlink into `mpmissions`. For custom maps this would usually be `/dayz/maps/<mission>` and would not be a directory within the `mpmissions` directory.",
         errorMessage: {
-          pattern: "MISSION_PATH must be an absolute path",
+          pattern: "MISSION_PATH must be an absolute path or a @{modID}-relative path",
         },
       }),
       updateMap: Type.Boolean({
