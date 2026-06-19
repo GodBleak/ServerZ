@@ -36,7 +36,7 @@ Special instructions provided for maps are also followed so long as they're comp
 - [Lux](#lux-) ✅
 - [PNW](#pnw-) ✅
 - [Arsteinen](#arsteinen-) ✅
-- [Newyork](#newyork-) ❌
+- [Newyork](#newyork-) ✅
 
 ### [Namalsk](https://namalsk.com/) ✅
 
