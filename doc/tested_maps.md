@@ -663,7 +663,6 @@ services:
       TEMPLATE: "dayzOffline.Lux"
       SERVER_TIME: 2026/06/01/13/00
       CPU_COUNT: 4
-      START_DAYZ_SERVER: false
     volumes:
       - "/data/dayz/testing/data:/data"
       - "/data/dayz/testing/overrides:/overrides"
