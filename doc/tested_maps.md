@@ -1,6 +1,6 @@
 # Tested Maps
 
-The following maps have been tested with ServerZ. Tests include setting up the server with the `podman-compose.yml` file listed, bringing the server up, connecting to the server, and moving the player a few steps away from the spawn point \*. Given it's ubiquity, CF was an assumed requirement for all maps. Between each test the server is wiped using the `WIPE` configuration option. All maps are tested using rootless Podman.
+The following maps have been tested with ServerZ. Tests include setting up the server with the `podman-compose.yml` file listed, bringing the server up, connecting to the server, and moving the player a few steps away from the spawn point \*. Given its ubiquity, [CF](https://steamcommunity.com/workshop/filedetails/?id=1559212036) was an assumed requirement for all maps. Between each test the server is wiped using the `WIPE` configuration option. All maps are tested using rootless Podman.
 
 <details>
 <summary>* Note</summary>
@@ -53,7 +53,7 @@ cp /data/dayz/testing/install/223350/@Namalsk\ Island/meta.cpp /data/dayz/testin
 cp /data/dayz/testing/install/223350/@Namalsk\ Survival/meta.cpp /data/dayz/testing/overrides/223350/@Namalsk\ Survival\ \(server\)
 ```
 
-`2289456201` and `2289461232` were then removed from `MOD_LIST`, and and the server was restarted with `CLEAN_MODS` was set to `true` to remove the client mods. Afterwards `CLEAN_MODS` and `START_DAYZ_SERVER` were unset. The final config was:
+`2289456201` and `2289461232` were then removed from `MOD_LIST`, and the server was restarted with `CLEAN_MODS` set to `true` to remove the client mods. Afterwards `CLEAN_MODS` and `START_DAYZ_SERVER` were unset. The final config was:
 
 ```yaml
 services:
@@ -177,20 +177,21 @@ services:
     restart: unless-stopped
     stop_grace_period: 2m
     environment:
-      MOD_LIST: 1559212036,2462896799
+      SERVER_NAME: "ServerZ Map Testing Server"
+      MOD_LIST: "[1559212036,2462896799]"
       MAP_URL: https://github.com/InclementDab/Esseker-Server.git
       MISSION_PATH: "/install/223350/maps/Esseker-Server/Mission Files/dayzOffline.Esseker"
       TEMPLATE: "dayzOffline.Esseker"
-      SERVER_TIME: 2025/07/01/13/00
+      SERVER_TIME: 2026/06/01/13/00
+      CPU_COUNT: 4
+    volumes:
+      - "/data/dayz/testing/data:/data"
+      - "/data/dayz/testing/overrides:/overrides"
+      - "/data/dayz/testing/install:/install"
+      - "/data/dayz/testing/steam:/root/.steam"
     ports:
       - 2302:2302/udp
-      - 27016:27016/udp
-      - 2304:2304/udp
-    volumes:
-      - ./testing/install:/install
-      - ./testing/overrides:/overrides
-      - ./testing/data:/data
-      - ./steamconfig:/root/.steam/steam/config
+      - 27015:27015/udp
 ```
 
 ### [Takistan Plus](https://steamcommunity.com/workshop/filedetails/?id=2563233742) ❌
@@ -206,20 +207,21 @@ services:
     restart: unless-stopped
     stop_grace_period: 2m
     environment:
-      MOD_LIST: 1559212036,2545327648,2344585107
+      SERVER_NAME: "ServerZ Map Testing Server"
+      MOD_LIST: "[1559212036,2545327648,2344585107]"
       MAP_URL: https://github.com/CypeR79/DayZ-Projects.git
       MISSION_PATH: "/install/223350/maps/DayZ-Projects/TakistanPlus/mission"
       TEMPLATE: "mission"
-      SERVER_TIME: 2025/07/01/13/00
+      SERVER_TIME: 2026/06/01/13/00
+      CPU_COUNT: 4
+    volumes:
+      - "/data/dayz/testing/data:/data"
+      - "/data/dayz/testing/overrides:/overrides"
+      - "/data/dayz/testing/install:/install"
+      - "/data/dayz/testing/steam:/root/.steam"
     ports:
       - 2302:2302/udp
-      - 27016:27016/udp
-      - 2304:2304/udp
-    volumes:
-      - ./testing/install:/install
-      - ./testing/overrides:/overrides
-      - ./testing/data:/data
-      - ./steamconfig:/root/.steam/steam/config
+      - 27015:27015/udp
 ```
 
 ### [Banov](https://steamcommunity.com/sharedfiles/filedetails/?id=2415195639) ✅
@@ -338,7 +340,7 @@ services:
 
 ![Failed to test on 18-06-2026](https://img.shields.io/badge/Failed_to_Test_18--06--2026-red)
 
-ServerZ has no way to obtain the server files. Packaged in a unsupported format.
+ServerZ has no way to obtain the server files. Packaged in an unsupported format.
 
 ### [Stuart Island](https://steamcommunity.com/sharedfiles/filedetails/?id=1936423383) ✅
 
@@ -399,7 +401,7 @@ services:
 
 ![Tested on 18-06-2026](https://img.shields.io/badge/Tested-18--06--2026-red)
 
-The server files are zipped and packaged with the mod. They're apparently from an active server. The zip includes a non-empty `storage_1` directory from the previous server. ~~This directory must be whited out before the server can be started, otherwise you will receive memory corruption errors. This was done with the following commands:~~ This no longer appears to work.
+The server files are zipped and packaged with the mod. They're apparently from an active server. The zip includes a non-empty `storage_1` directory from the previous server. ~~This directory must be whited out before the server can be started, otherwise you will receive memory corruption errors. This was done with the following commands:~~ This workaround no longer appears to prevent errors that prevent the server from starting.
 
 ```bash
 mkdir -p testing/overrides/mpmissions/dayzOffline.Yiprit/storage_1
@@ -541,7 +543,7 @@ services:
       - 27015:27015/udp
 ```
 
-### [Raman](https://steamcommunity.com/sharedfiles/filedetails/?id=3050117454) ❌
+### [Raman](https://steamcommunity.com/sharedfiles/filedetails/?id=3401182744) ❌
 
 ![Tested on 19-06-2026](https://img.shields.io/badge/Tested-19--06--2026-red)
 
@@ -614,13 +616,13 @@ services:
 
 ![Failed to test on 19-06-2026](https://img.shields.io/badge/Failed_to_Test_19--06--2026-red)
 
-ServerZ has no way to obtain the server files. Packaged in a unsupported format. Hosted on Discord.
+ServerZ has no way to obtain the server files. Packaged in an unsupported format. Hosted on Discord.
 
 ### [Vela](https://steamcommunity.com/sharedfiles/filedetails/?id=2794308565) ❌
 
 ![Tested on 19-06-2026](https://img.shields.io/badge/Tested-19--06--2026-red)
 
-Server keys are not included in the zip. Keys are hosted on Discord, you could download them and place them in a `keys` directory in the `OVERRIDES_DIRECTORY/223350` directory. However, my testing ended here.
+Server keys are not included in the zip. Keys are hosted on Discord. You could download them and place them in a `keys` directory in the `OVERRIDES_DIRECTORY/223350` directory. However, my testing ended here.
 
 ```yaml
 services:
