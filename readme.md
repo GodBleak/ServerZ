@@ -7,11 +7,12 @@ ServerZ is a DayZ server wrapper made for running DayZ in containerized environm
 - Automatic server installation and update.
 - Automatic mod installation and update.
 - All of `serverDZ.cfg` is configurable through environment variables.
-- Easy configuration of many (if not all) other server settings, again, through environment variables.
+- Easy configuration of many other server settings, again, through environment variables.
 
 ## Usage
 
-> 🔵 **Note:** By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment variable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
+> [!TIP]
+> By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment variable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
 
 ### Docker/Podman run
 
@@ -100,9 +101,11 @@ bun start
 ```
 
 ## Logging into Steam
-Unless you're using the DayZ Experimental server build without Workshop content, you'll need to authenticate with Steam to download the server and workshop items. Previously, this meant providing your Steam credentials through environment variables. However, this is no longer the only option, nor is it the recommended option. 
+
+Unless you're using the DayZ Experimental server build without Workshop content, you'll need to authenticate with Steam to download the server and workshop items. Previously, this meant providing your Steam credentials through environment variables. However, this is no longer the only option, nor is it the recommended option.
 
 ### QR Login (Recommended)
+
 By default, ServerZ now uses QR Code login. On startup you'll see something like this printed in the container logs:
 
 ```
@@ -126,10 +129,13 @@ By default, ServerZ now uses QR Code login. On startup you'll see something like
 █ █▄▄▄█ █ ▄▀▀ ▄  ▄▄ █▀██  ▀█▄▄█
 █▄▄▄▄▄▄▄█▄▄▄██▄▄▄██▄▄▄█▄▄▄███▄█
 ```
+
 Open the Steam app ([Android](https://play.google.com/store/apps/details?id=com.valvesoftware.android.steam.community)|[iOS](https://apps.apple.com/app/steam-mobile/id495369748)) and [scan](https://help.steampowered.com/en/faqs/view/7EFD-3CAE-64D3-1C31#qrlogin) the QR shown in your logs.
 
 ### Username & Password (Strongly discouraged)
+
 Should QR Login not work for you, ServerZ still supports logging in by passing your credentials through environment variables, for example:
+
 ```yaml
 services:
   serverz:
@@ -147,11 +153,15 @@ services:
       - 2302:2302/udp
       - 27015:27015/udp
 ```
+
 ### Anonymous
-If you're using the experimental server, you do not need to login. If you have saved credentials, and wish to login anonymously without losing those saved credentials, set `STEAM_USERNAME` to "anonymous". 
+
+If you're using the experimental server, you do not need to login. If you have saved credentials, and wish to login anonymously without losing those saved credentials, set `STEAM_USERNAME` to "anonymous".
 
 ### Persisting credentials
-However you logged in, to ensure you don't need to do so again every time the container is recreated or if you want to share the saved credentials between servers, bind mount `/root/.steam` to somewhere on your host, like: 
+
+However you logged in, to ensure you don't need to do so again every time the container is recreated or if you want to share the saved credentials between servers, bind mount `/root/.steam` to somewhere on your host, like:
+
 ```bash
 docker run -d \
     -v "/path/to/persistent/data/directory:/data" \
@@ -163,7 +173,9 @@ docker run -d \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
-> 🔵 **Note:** If you used Username & Password to login, you should remove `STEAM_PASSWORD` from the compose file or docker run command. Subsequent containers/restarts should not need `STEAM_PASSWORD`; saved credentials will be reused from `/root/.steam`. You may leave `STEAM_USERNAME` set to make the intended account explicit.
+
+> [!NOTE]
+> If you used Username & Password to login, you should remove `STEAM_PASSWORD` from the compose file or docker run command. Subsequent containers/restarts should not need `STEAM_PASSWORD`; saved credentials will be reused from `/root/.steam`. You may leave `STEAM_USERNAME` set to make the intended account explicit.
 
 ## Environment Variables
 
@@ -195,7 +207,8 @@ docker run -d -P \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
-> 🔵 **Note:** In respect to mods, there's only so much that can be done with environment variables. You will likely still need to do some manual configuration (like mod-specific configuration, merging types, etc).
+> [!NOTE]
+> In respect to mods, there's only so much that can be done with environment variables. You will likely still need to do some manual configuration (like mod-specific configuration, merging types, etc).
 >
 > The server will do the following for you:
 >
@@ -207,6 +220,9 @@ docker run -d -P \
 > Anything beyond this will need to be done manually.
 
 ## Using Maps
+
+> [!NOTE]
+> ServerZ is compatible with many maps, for a list of tested maps and their configurations, see [tested_maps.md](doc/tested_maps.md).
 
 By default the server will load Chernarus. However, if you'd instead like to use...
 
@@ -256,7 +272,8 @@ You will need to tell the server how to download it. Currently the server can ob
 
 #### Download from Workshop
 
-> **🟠 Warning:** This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`).
+> [!WARNING]
+> This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`).
 
 To download a map from the workshop, you can simply add the map's workshop ID to the `MOD_LIST` environment variable.
 
