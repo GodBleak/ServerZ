@@ -34,15 +34,21 @@ async function main() {
 
   await overlay.configure()
 
-  if (!config.meta.skipUpdate || !config.meta.skipMods) await server.doSteamLogin()
+  const steamNeeded = !config.meta.skipUpdate || !config.meta.skipMods
+  if (steamNeeded) await server.doSteamLogin()
+
   if (!config.meta.skipUpdate) await server.updateServer()
   if (!config.meta.skipMods) await server.updateMods()
   await server.loadMods()
   if (config.meta.cleanMods) await server.cleanMods()
   if (!config.meta.skipMap) await server.updateMap()
   await server.applyTemplates()
-  if (config.meta.startDayZServer) server.start()
-  else logger.warn("Server start disabled. START_DAYZ_SERVER may be set to false")
+  if (config.meta.startDayZServer) {
+    server.start()
+  } else {
+    logger.warn("Server start disabled. START_DAYZ_SERVER may be set to false")
+    await hang() // prevent boot-loop on containers with restart=unless-stopped
+  }
 }
 
 void main()

@@ -186,7 +186,6 @@ export class Server {
     const result = await this.steam.updateApp(config.steam.appID, {
       ...getSteamAppDownloadOptions(),
       directory: config.steam.downloadDirectory,
-      exclude: ["**/*.pdb"],
       skipUnavailableDepots: true,
     })
 
