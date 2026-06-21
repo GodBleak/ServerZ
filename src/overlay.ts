@@ -8,6 +8,7 @@ import { ExternalizedPromise } from "./lib/externalizedPromise.js"
 class Overlay {
   private mounted: boolean = false
   private strategy: "kernel" | "fuse" | "copy" | undefined = undefined
+  private copyingOut: Promise<void> | undefined = undefined
   public reloading: undefined | ExternalizedPromise<void> = undefined
 
   public async configure() {
@@ -147,6 +148,22 @@ class Overlay {
     }
     return exec(command, args)
   }
+
+  public async copyOut(): Promise<void> {
+    if (this.strategy !== "copy") return
+    if (this.copyingOut) return this.copyingOut
+
+    this.copyingOut = this.copyOutImpl().finally(() => {
+      this.copyingOut = undefined
+    })
+
+    return this.copyingOut
+  }
+
+  private async copyOutImpl(): Promise<void> {
+    logger.info(`Persisting copy-mode server directory ${config.meta.serverDirectory} to ${config.meta.dataDirectory}`)
+    await exec("rsync", ["-a", "--delete", `${config.meta.serverDirectory}/`, `${config.meta.dataDirectory}/`])
+  }
 }
 
 export const overlay = new Overlay()
@@ -180,6 +197,7 @@ async function unmountFuseOverlayFS() {
 
 async function doCopy() {
   await exec("rsync", ["-a", `${config.meta.installDirectory}/`, `${config.meta.serverDirectory}/`])
+  await exec("rsync", ["-a", `${config.meta.dataDirectory}/`, `${config.meta.serverDirectory}/`])
   await exec("rsync", ["-a", `${config.meta.overridesDirectory}/`, `${config.meta.serverDirectory}/`])
   await exec("rsync", ["-a", `${config.meta.generatedConfigDirectory}/`, `${config.meta.serverDirectory}/`])
 }

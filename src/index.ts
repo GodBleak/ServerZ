@@ -5,10 +5,14 @@ import { hang } from "#lib/hang"
 import { Server } from "./server.js"
 import { overlay } from "./overlay.js"
 import { wipe } from "./wipe.js"
+import { installDirectSignalShutdownHandlers, installFatalShutdownHandlers } from "./shutdown.js"
 import qrcode from "qrcode-terminal"
 import type { QrChallenge } from "depot-client/src/types.js"
 
+installFatalShutdownHandlers()
+
 async function main() {
+  const removeDirectSignalShutdownHandlers = installDirectSignalShutdownHandlers()
   const steam = createSteamAPI({
     adapter: config.steam.steamApiAdapter,
     dataDir: config.steam.configDirectory,
@@ -29,7 +33,7 @@ async function main() {
 
   if (config.meta.wipe === true || config.meta.wipe === "dry-run") {
     await wipe()
-    await hang()
+    await hang({ handleSignals: false })
   }
 
   await overlay.configure()
@@ -44,10 +48,11 @@ async function main() {
   if (!config.meta.skipMap) await server.updateMap()
   await server.applyTemplates()
   if (config.meta.startDayZServer) {
+    removeDirectSignalShutdownHandlers()
     server.start()
   } else {
     logger.warn("Server start disabled. START_DAYZ_SERVER may be set to false")
-    await hang() // prevent boot-loop on containers with restart=unless-stopped
+    await hang({ handleSignals: false }) // prevent boot-loop on containers with restart=unless-stopped
   }
 }
 

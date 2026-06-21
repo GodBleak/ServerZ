@@ -1,6 +1,7 @@
 import path from "node:path"
 import { config, hasExplicitConfigValue } from "./config"
 import { healthReporter } from "./healthReporter.js"
+import { shutdown as shutdownProcess } from "./shutdown.js"
 import type { SteamAPI } from "./lib/index.js"
 import { overlay } from "./overlay.js"
 import type { DownloadAppOptions, DownloadAppProgress, DownloadWorkshopFileOptions } from "./lib/steamapi/depot-client/src/index.js"
@@ -325,11 +326,10 @@ export class Server {
       logger.info(`DayZServer(${server.pid}) exited with code ${code}`)
       if (!config.meta.exitWithChild) return
 
-      logger.info("Exiting...")
-      process.exit(code)
+      await shutdownProcess(code, "child exited")
     })
 
-    const shutdown = async (signal: "SIGTERM" | "SIGINT") => {
+    const shutdownChild = async (signal: "SIGTERM" | "SIGINT") => {
       healthReporter.stop()
       await overlay.reloading?.promise
       sigkillTimeoutPromise = sigkillTimeoutPromise ?? new ExternalizedPromise()
@@ -346,12 +346,12 @@ export class Server {
         }
       }
       if (sigkillTimeout) clearTimeout(sigkillTimeout)
-      await server.exited
-      process.exit(1)
+      const code = await server.exited.catch(() => 1)
+      await shutdownProcess(typeof code === "number" ? code : 1, signal)
     }
 
-    process.once("SIGTERM", () => void shutdown("SIGTERM"))
-    process.once("SIGINT", () => void shutdown("SIGINT"))
+    process.once("SIGTERM", () => void shutdownChild("SIGTERM"))
+    process.once("SIGINT", () => void shutdownChild("SIGINT"))
 
     return server
   }
