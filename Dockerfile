@@ -45,6 +45,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=20m --retries=3 CMD [ "/
 
 ENV ALLOW_CONFIG_MUTATIONS=true
 ENV USE_USERXATTR=false
+ENV NODE_CONFIG_PARSER=/serverz/src/config/node-config-parser.js
 
 
 FROM runtime-base AS rootful
