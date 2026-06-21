@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+/* oxlint-disable no-console */
 
 import { readdir, readFile, writeFile } from "node:fs/promises"
 import path from "node:path"

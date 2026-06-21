@@ -20,7 +20,7 @@ const resolvedConfig = resolveConfig(rawConfig, rawConfig["_defaults"] as Config
 try {
   _config = validateConfig(resolvedConfig)
 } catch (e) {
-  console.error("Invalid ServerZ configuration:", e)
+  logger.error("Invalid ServerZ configuration:", e)
   process.exit(1)
 }
 

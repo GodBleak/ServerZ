@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* oxlint-disable no-console */
+
 const { spawnSync } = require("node:child_process")
 const fs = require("node:fs")
 const path = require("node:path")

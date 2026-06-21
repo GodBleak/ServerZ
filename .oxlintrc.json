@@ -6,6 +6,7 @@
     "typescript/no-explicit-any": "error",
     "typescript/consistent-type-imports": ["error", { "prefer": "type-imports", "fixStyle": "inline-type-imports" }],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "no-console": "error",
     "curly": ["error", "multi-or-nest", "consistent"]
   },
   "options": {

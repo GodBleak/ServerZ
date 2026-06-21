@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+/* oxlint-disable no-console */
+
 import { spawnSync } from "node:child_process"
 import { mkdirSync } from "node:fs"
 import { join, relative, resolve } from "node:path"
