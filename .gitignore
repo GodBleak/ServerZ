@@ -19,6 +19,7 @@
 !LICENSE
 !bun.lock
 !package.json
+!CONTRIBUTING.md
 !readme.md
 !tsconfig.json
 !jsx-runtime.ts
