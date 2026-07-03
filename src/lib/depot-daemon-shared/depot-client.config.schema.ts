@@ -64,6 +64,11 @@ export const DepotClientConfigSchema = Type.Object({
     description: 'Behavior when workshop dependencies contain cycles.'
   }),
 
+  steamUserConnectionProtocol: Type.Union([Type.Literal('auto'), Type.Literal('tcp'), Type.Literal('websocket')], {
+    env: 'STEAM_USER_CONNECTION_PROTOCOL',
+    default: 'auto',
+    description: 'Connection protocol used by steam-user for Steam CM logon. `auto` currently prefers TCP under Bun; use `websocket` when outbound Steam CM TCP is blocked.'
+  }),
   downloadBackend: Type.Union([Type.Literal('bun-cdn'), Type.Literal('managed-chunks'), Type.Literal('steam-user-file')], {
     env: 'STEAM_DOWNLOAD_BACKEND',
     default: 'bun-cdn',
