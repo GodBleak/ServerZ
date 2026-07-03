@@ -1,6 +1,6 @@
 # Tested Maps
 
-The following maps have been tested with ServerZ. Tests include setting up the server with the `podman-compose.yml` file listed, bringing the server up, connecting to the server, and moving the player a few steps away from the spawn point \*. Given its ubiquity, [CF](https://steamcommunity.com/workshop/filedetails/?id=1559212036) was an assumed requirement for all maps. Between each test the server is wiped using the `WIPE` configuration option. All maps are tested using rootless Podman.
+The following maps have been tested with ServerZ. Tests include setting up the server with the `compose.yml` file listed, bringing the server up, connecting to the server, and moving the player a few steps away from the spawn point \*. Given its ubiquity, [CF](https://steamcommunity.com/workshop/filedetails/?id=1559212036) was an assumed requirement for all maps. Between each test the server is wiped using the `WIPE` configuration option. All maps are tested using rootless Podman.
 
 <details>
 <summary>* Note</summary>

@@ -1,18 +1,31 @@
+<img src="doc/serverz_banner.png" alt="ServerZ Banner" width="100%" />
+
+<div align="center">
+
+[![GitLab License](https://img.shields.io/gitlab/license/godbleak/serverz?gitlab_url=https%3A%2F%2Fgitlab.godbleak.dev%2F&style=for-the-badge&color=blue)](LICENSE)
+![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/godbleak/serverz?gitlab_url=https%3A%2F%2Fgitlab.godbleak.dev%2F&style=for-the-badge)
+![Discord](https://img.shields.io/discord/308323056592486420?logo=discord&label=Discord&style=for-the-badge)
+
+</div>
+
 # ServerZ
 
-ServerZ is a DayZ server wrapper made for running DayZ in containerized environments. It's highly configurable through the use of environment variables.
+A DayZ dedicated server orchestrator for containerized environments. It handles the whole server lifecycle — Steam authentication, installation, mod and map management, configuration, and the running server process itself — through nothing but environment variables.
 
 ## Features
 
-- Automatic server installation and update.
-- Automatic mod installation and update.
-- All of `serverDZ.cfg` is configurable through environment variables.
-- Easy configuration of many other server settings, again, through environment variables.
+- **No manual SteamCMD babysitting.** The server and your mods install and stay updated automatically — no scripts to run by hand, no steps to remember.
+- **No file-editing required.** All of `serverDZ.cfg`, and most other server settings, can be configured through environment variables — the same way you'd configure any other container, not a config file you have to hunt down and hand-edit.
+- **No manual mod wiring.** Give ServerZ a list of Workshop IDs and it handles the symlinks, the keys, and the launch parameters — the fiddly setup, not just the download.
+- **Walks and talks like a container should.** Configuration is just environment variables — copy them to a new container and you get the same initial server, every time.
 
 ## Usage
 
-> [!TIP]
+> [!IMPORTANT]
 > By default the server uses 50% of the CPU available to it. You're advised to change this by setting the environment variable `CPU_COUNT` to the actual number of CPUs you want to allocate to the server.
+
+> [!NOTE]
+> If you're brand new to hosting, see the [Zero to DayZ tutorial](doc/linux_podman_tutorial.md). Alternatively, if you're already familiar with containerization, you may want to check out the [ServerZ Quick Start](doc/quick_start_guide_podman.md) guide.
 
 ### Docker/Podman run
 
@@ -30,7 +43,7 @@ docker run -d -P \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
-### Docker Compose
+### Compose
 
 Replace `/path/to/persistent/***/directory` with the path to a directory on your host machine where you want to store persistent data.
 
@@ -40,7 +53,7 @@ services:
     image: registry.godbleak.dev/godbleak/serverz:latest
     restart: unless-stopped
     environment:
-      MOTD: '["DayZ Server in a Box"]' # Example of setting a serverDZ.cfg variable
+      MOTD: '["DayZ in a Box"]' # Example of setting a serverDZ.cfg variable
     volumes:
       - "/path/to/persistent/data/directory:/data"
       - "/path/to/persistent/overrides/directory:/overrides"
@@ -65,39 +78,6 @@ podman run -d -P \
     -p 27015:27015/udp \
     --restart unless-stopped \
     registry.godbleak.dev/godbleak/serverz:rootless
-```
-
-### Development
-
-1. Clone the repository.
-
-```bash
-git clone gitlab.godbleak.dev/godbleak/serverz.git
-```
-
-2. Change into the directory.
-
-```bash
-cd serverz
-```
-
-3. Install the dependencies.
-
-```bash
-bun install
-```
-
-4. Develop.
-5. Run in development mode.
-
-```bash
-bun run dev
-```
-
-6. Run in production mode.
-
-```bash
-bun start
 ```
 
 ## Logging into Steam
@@ -156,7 +136,7 @@ services:
 
 ### Anonymous
 
-If you're using the experimental server, you do not need to login. If you have saved credentials, and wish to login anonymously without losing those saved credentials, set `STEAM_USERNAME` to "anonymous".
+If you're using the experimental server without Workshop mods, you do not need to login. If you have saved credentials, and wish to login anonymously without losing those saved credentials, set `STEAM_USERNAME` to "anonymous". If you do want mods on the experimental server, see [Mods](#mods) under [Experimental](#experimental) — you'll still need to authenticate.
 
 ### Persisting credentials
 
@@ -174,7 +154,7 @@ docker run -d \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > If you used Username & Password to login, you should remove `STEAM_PASSWORD` from the compose file or docker run command. Subsequent containers/restarts should not need `STEAM_PASSWORD`; saved credentials will be reused from `/root/.steam`. You may leave `STEAM_USERNAME` set to make the intended account explicit.
 
 ## Environment Variables
@@ -217,7 +197,7 @@ docker run -d -P \
 > - Link all the mod's keys to the server's keys folder
 > - Add the mods to the server's launch parameters
 >
-> Anything beyond this will need to be done manually.
+> Anything beyond that: _insert that mod's readme here._
 
 ## Using Maps
 
@@ -272,7 +252,7 @@ You will need to tell the server how to download it. Currently the server can ob
 
 #### Download from Workshop
 
-> [!WARNING]
+> [!IMPORTANT]
 > This method treats the map as a mod, and will be updated as such. This means that `UPDATE_MAP` has no effect on maps downloaded this way, and will be updated with the rest of the mods (On server start, unless `SKIP_MODS` is set to `true`).
 
 To download a map from the workshop, you can simply add the map's workshop ID to the `MOD_LIST` environment variable.
@@ -334,19 +314,32 @@ services:
       - 27015:27015/udp
 ```
 
+<a name="copy-mission"></a>
+
+#### Coming from V1: `COPY_MISSION`
+
+<details>
+  <summary>If you previously used <code>COPY_MISSION</code> ...</summary>
+
+`COPY_MISSION` used to copy the mission folder instead of symlinking it, to protect mission edits from being overwritten on update. OverlayFS now protects mission persistence automatically, so `COPY_MISSION` is deprecated and will be removed in a future release. If OverlayFS doesn't cover a case you relied on `COPY_MISSION` for, please [open an issue](#issues).
+
+</details>
+
 ## Experimental
 
 To run the experimental DayZ Server, change the `APP_ID` environment variable to it's app ID (1042420).
 
 ### Mods
 
-To install mods when running the experimental server, set the `MOD_APP_ID` environment variable to the app ID of the experimental client (1024020). This changes the steamCMD command to download the mods from the workshop associated with the experimental client.
+To install mods when running the experimental server, set the `MOD_APP_ID` environment variable to the app ID of the experimental client (1024020). This downloads mods from the workshop associated with the experimental client. Note this still requires Steam authentication — see [Logging into Steam](#logging-into-steam) — even if you're running the experimental server anonymously.
+
+<a name="overlayfs"></a>
 
 ## Persistence and OverlayFS
 
 As of version 2.0.0, ServerZ now utilizes OverlayFS, for a few reasons:
 
-- To make sure **your customizations to the base game aren't overwritten by Steam** when updating or validating the server, maps, or mods.
+- To make sure **your customizations to the base game aren't overwritten by Steam** when updating or validating the server, maps, or mods. (If you used [`COPY_MISSION`](#copy-mission) in V1 for this, it's no longer needed.)
 - To **allow one installation of DayZ to serve multiple instances of ServerZ.** With this, one ServerZ instance has a base installation size of ~3GB, you can add another, 5, or 100 or more instances of ServerZ, and still only be using ~3GB of disk space for base installs, total.
 - To facilitate **thinner backups.** Because all server writes are captured to `DATA_DIRECTORY`, you can backup _server state_ (not configuration) by backing up the `DATA_DIRECTORY` and it will only contain the delta between your server's state and the base game state -- your backups don't need to contain the entire DayZ Server installation.
 
@@ -472,6 +465,10 @@ Visit `http://localhost:8080` in your browser, use "admin" as the username, and 
 
 Refer to [filebrowser/filebrowser](https://github.com/filebrowser/filebrowser)
 for usage and configuration.
+
+## Contributing
+
+Want to work on ServerZ itself? See [CONTRIBUTING.md](CONTRIBUTING.md) for getting a development environment running.
 
 ## Issues
 
