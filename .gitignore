@@ -20,6 +20,7 @@
 !bun.lock
 !package.json
 !CONTRIBUTING.md
+!CHANGELOG.md
 !readme.md
 !tsconfig.json
 !jsx-runtime.ts
