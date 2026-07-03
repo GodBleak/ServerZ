@@ -5,8 +5,8 @@
 <div align="center">
 
 [![GitLab License](https://img.shields.io/gitlab/license/godbleak/serverz?gitlab_url=https%3A%2F%2Fgitlab.godbleak.dev%2F&style=for-the-badge&color=blue)](LICENSE)
-![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/godbleak/serverz?gitlab_url=https%3A%2F%2Fgitlab.godbleak.dev%2F&style=for-the-badge)
-![Discord](https://img.shields.io/discord/308323056592486420?logo=discord&label=Discord&style=for-the-badge)
+[![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/godbleak/serverz?gitlab_url=https%3A%2F%2Fgitlab.godbleak.dev%2F&style=for-the-badge)](https://gitlab.godbleak.dev/GodBleak/serverz/-/pipelines)
+[![Discord](https://img.shields.io/discord/1521334570904064010?logo=discord&label=Discord&style=for-the-badge)](https://discord.gg/N9EBGRjwYj)
 
 </div>
 
@@ -42,6 +42,7 @@ docker run -d -P \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
@@ -54,6 +55,7 @@ services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
     restart: unless-stopped
+    stop_grace_period: 2m
     environment:
       MOTD: '["DayZ in a Box"]' # Example of setting a serverDZ.cfg variable
     volumes:
@@ -79,8 +81,25 @@ podman run -d -P \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:rootless
 ```
+
+#### pasta
+
+If you're using rootless podman, players may show as connecting from the IP address of the container, rather than their actual IP address. To fix this, you can use [pasta](https://passt.top/passt/about/#pasta-pack-a-subtle-tap-abstraction), by adding
+
+```bash
+network_mode: "pasta:--ipv4-only"
+```
+
+to your `compose.yaml` file, or
+
+```bash
+--network pasta:-4
+```
+
+to your `podman run` command.
 
 ## Logging into Steam
 
@@ -123,6 +142,7 @@ services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
     restart: unless-stopped
+    stop_grace_period: 2m
     environment:
       STEAM_USERNAME: "Survivor" # your steam username here
       STEAM_PASSWORD: "!nf3ct3d" # your steam password here
@@ -153,6 +173,7 @@ docker run -d \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
@@ -186,6 +207,7 @@ docker run -d -P \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
@@ -222,6 +244,7 @@ docker run -d -P \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
@@ -239,6 +262,7 @@ docker run -d -P \
     -p 2302:2302/udp \
     -p 27015:27015/udp \
     --restart unless-stopped \
+    --stop-timeout 120 \
     registry.godbleak.dev/godbleak/serverz:latest
 ```
 
@@ -280,6 +304,7 @@ services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
     restart: unless-stopped
+    stop_grace_period: 2m
     volumes:
       - "/path/to/persistent/data/directory:/data"
       - "/path/to/persistent/overrides/directory:/overrides"
@@ -301,6 +326,7 @@ services:
   serverz:
     image: registry.godbleak.dev/godbleak/serverz:latest
     restart: unless-stopped
+    stop_grace_period: 2m
     volumes:
       - "/path/to/persistent/data/directory:/data"
       - "/path/to/persistent/overrides/directory:/overrides"
