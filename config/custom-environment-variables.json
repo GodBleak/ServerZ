@@ -496,7 +496,18 @@
             "echoMinorRemoteSteamDetails": {
                 "__name": "ECHO_MINOR_REMOTE_STEAM_DETAILS",
                 "__format": "boolean"
-            }
+            },
+            "steamContentConsumerId": "STEAM_CONTENT_CONSUMER_ID",
+            "steamContentLockHeartbeatMs": {
+                "__name": "STEAM_CONTENT_LOCK_HEARTBEAT_MS",
+                "__format": "number"
+            },
+            "steamContentLockTtlMs": {
+                "__name": "STEAM_CONTENT_LOCK_TTL_MS",
+                "__format": "number"
+            },
+            "steamRemoteValidationFailure": "STEAM_REMOTE_VALIDATION_FAILURE",
+            "steamUserConnectionProtocol": "STEAM_USER_CONNECTION_PROTOCOL"
         }
     }
 }

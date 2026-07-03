@@ -6,9 +6,7 @@ import * as Engine from "engine.io-client"
 import { io as createSocketIoClient, type Socket } from "socket.io-client"
 import type {
   DownloadAppOptions,
-  DownloadAppResult,
   DownloadWorkshopFileOptions,
-  DownloadWorkshopFileResult,
   QrChallenge,
   ValidateAppOptions,
   ValidateAppResult,
@@ -16,18 +14,22 @@ import type {
 import { installBunUnixFetch } from "./bun-unix-fetch.js"
 import {
   hydrateSteamEventArgs,
+  type ContentLock,
+  type ContentLockResponse,
   type LoginResponse,
   type SerializedSteamEvent,
   type SteamContentServiceClient,
   type UpdateAppRequest,
+  type UpdateAppResponse,
   type VerifyAppRequest,
   type WorkshopDownloadRequest,
+  type WorkshopDownloadResponse,
 } from "../depot-daemon-shared/depot-daemon-api.js"
 import type { SteamAPI } from "./types.js"
 
 type SteamContentSocketService = SocketService & SteamContentServiceClient
 
-const STEAM_CONTENT_SERVICE_METHODS = ["login", "updateApp", "verify", "workshopDownload"] as const
+const STEAM_CONTENT_SERVICE_METHODS = ["login", "updateApp", "verify", "workshopDownload", "registerContentLocks", "heartbeatContentLocks", "releaseContentLocks"] as const
 
 type ServiceTypes = {
   steam: SteamContentSocketService
@@ -102,7 +104,7 @@ export class RemoteSteamAPI extends EventEmitter implements SteamAPI {
     if (result.alreadyLoggedIn) this.emit("debug", "Already logged in, skipping remote login attempt")
   }
 
-  public async updateApp(appId: number, options: Omit<DownloadAppOptions, "appId">): Promise<DownloadAppResult> {
+  public async updateApp(appId: number, options: Omit<DownloadAppOptions, "appId">): Promise<UpdateAppResponse> {
     await this.ensureConnected()
     return this.steamService.updateApp({ appId, options } satisfies UpdateAppRequest)
   }
@@ -116,9 +118,24 @@ export class RemoteSteamAPI extends EventEmitter implements SteamAPI {
     appId: number,
     workshopId: number,
     options: Omit<DownloadWorkshopFileOptions, "appId" | "publishedFileId">
-  ): Promise<DownloadWorkshopFileResult> {
+  ): Promise<WorkshopDownloadResponse> {
     await this.ensureConnected()
     return this.steamService.workshopDownload({ appId, workshopId, options } satisfies WorkshopDownloadRequest)
+  }
+
+  public async registerContentLocks(consumerId: string, content: ContentLock[], ttlMs: number): Promise<ContentLockResponse> {
+    await this.ensureConnected()
+    return this.steamService.registerContentLocks({ consumerId, content, ttlMs })
+  }
+
+  public async heartbeatContentLocks(consumerId: string, ttlMs: number): Promise<ContentLockResponse> {
+    await this.ensureConnected()
+    return this.steamService.heartbeatContentLocks({ consumerId, ttlMs })
+  }
+
+  public async releaseContentLocks(consumerId: string): Promise<ContentLockResponse> {
+    await this.ensureConnected()
+    return this.steamService.releaseContentLocks({ consumerId })
   }
 
   public close(): void {

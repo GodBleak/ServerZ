@@ -102,7 +102,11 @@
             "ffiLzmaProcessRetries": 2,
             "nodeExecutable": "node",
             "lzmaNativeRequirePath": "lzma-native",
-            "echoMinorRemoteSteamDetails": false
+            "echoMinorRemoteSteamDetails": false,
+            "steamContentLockHeartbeatMs": 10000,
+            "steamContentLockTtlMs": 30000,
+            "steamRemoteValidationFailure": "warn",
+            "steamUserConnectionProtocol": "auto"
         }
     }
 }

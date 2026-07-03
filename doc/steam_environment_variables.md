@@ -92,6 +92,10 @@ const downloadProfiles = {
 | `STEAM_CONTENT_URL` | `http://depot-daemon.local` | Remote depot-daemon URL. For UDS, this is a fake origin routed through Bun's Unix-socket fetch support. |
 | `STEAM_CONTENT_SOCKET_IO_PATH` | `/socket.io/` | Socket.IO path exposed by depot-daemon. |
 | `STEAM_CONTENT_TIMEOUT_MS` | `60000` | Remote depot-daemon connection and request timeout in milliseconds. |
+| `STEAM_CONTENT_CONSUMER_ID` | `serverz:${HOSTNAME}:${APP_ID}` | Consumer identity used when registering live content locks with depot-daemon. Defaults to a ServerZ/container/app identifier. |
+| `STEAM_CONTENT_LOCK_HEARTBEAT_MS` | `10000` | Interval for refreshing remote depot-daemon content locks while DayZ is running. |
+| `STEAM_CONTENT_LOCK_TTL_MS` | `30000` | Depot-daemon content-lock TTL. If heartbeats stop for this long, daemon releases this consumer's locks. |
+| `STEAM_REMOTE_VALIDATION_FAILURE` | `warn` | Remote depot-daemon validation failure policy when content repair is suppressed by active content locks. `warn` logs and continues startup; `fail` aborts startup. |
 | `ECHO_MINOR_REMOTE_STEAM_DETAILS` | `false` | Echo minor remote Steam details to the console, when connected to depot-daemon. |
 | `STEAM_APP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam app/server files |
 | `STEAM_WORKSHOP_DOWNLOAD_PROFILE` | `fast` | Download profile for Steam workshop items |
@@ -103,6 +107,7 @@ const downloadProfiles = {
 | `STEAM_WORKSHOP_INCLUDE_CHILDREN` | `true` | Include child/dependency workshop items. |
 | `STEAM_WORKSHOP_SEPARATE_ITEM_DIRS` | `true` | Keep each workshop item in a separate directory. |
 | `STEAM_WORKSHOP_CYCLE_MODE` | `skip` | Behavior when workshop dependencies contain cycles. |
+| `STEAM_USER_CONNECTION_PROTOCOL` | `auto` | Connection protocol used by steam-user for Steam CM logon. `auto` currently prefers TCP under Bun; use `websocket` when outbound Steam CM TCP is blocked. |
 | `STEAM_DOWNLOAD_BACKEND` | `bun-cdn` | Download backend. `bun-cdn` is the native fast path. |
 | `STEAM_MAX_CONCURRENT_CHUNKS` | `32` | Max concurrent chunks per depot for `bun-cdn`/`managed-chunks`. |
 | `STEAM_MAX_CONCURRENT_DEPOTS` | `3` | Max depots processed concurrently. |

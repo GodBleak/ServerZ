@@ -3,6 +3,7 @@ import { config, hasExplicitConfigValue } from "./config"
 import { healthReporter } from "./healthReporter.js"
 import { shutdown as shutdownProcess } from "./shutdown.js"
 import type { SteamAPI } from "./lib/index.js"
+import type { ContentLock, ContentLockedAppValidationResult, ContentLockedWorkshopDownloadResult } from "./lib/depot-daemon-shared/depot-daemon-api.js"
 import { overlay } from "./overlay.js"
 import type { DownloadAppOptions, DownloadAppProgress, DownloadWorkshopFileOptions } from "./lib/steamapi/depot-client/src/index.js"
 
@@ -16,6 +17,8 @@ export class Server {
   private modNameList: string[] = []
   private modNameMap: Record<number, string> = {}
   private lastSteamProgressLineAt = 0
+  private contentLockHeartbeat: ReturnType<typeof setInterval> | undefined
+  private contentLocksReleased = true
 
   constructor(private steam: SteamAPI) {}
   /**
@@ -190,6 +193,13 @@ export class Server {
       skipUnavailableDepots: true,
     })
 
+    if (isContentLockedAppValidationResult(result)) {
+      this.handleLockedAppValidationResult(result, "[DAYZ SERVER INSTALLATION]")
+      await overlay.reloading?.promise
+      await overlay.reload()
+      return
+    }
+
     const totals = summarizeDownloadResult(result.depots)
     logger.info(
       `[DAYZ SERVER INSTALLATION] Installed ${result.depots.length} depot(s); ` +
@@ -216,6 +226,11 @@ export class Server {
         ...getSteamWorkshopDownloadOptions(),
         directory: config.meta.modPath,
       })
+
+      if (isContentLockedWorkshopDownloadResult(result)) {
+        this.handleLockedWorkshopDownloadResult(result)
+        continue
+      }
 
       const totals = summarizeDownloadResult(result.depots)
 
@@ -302,7 +317,9 @@ export class Server {
    * The server is spawned in the `serverDirectory` and detached from the current process.
    * @returns The spawned server process.
    */
-  public start() {
+  public async start() {
+    await this.registerContentLocks()
+
     const command = this.getStartCommand()
     logger.info(`Starting server with command: ${command.join(" ")}\n\n`)
     const server = Bun.spawn(command, {
@@ -321,6 +338,8 @@ export class Server {
       if (sigkillTimeoutPromise !== null) sigkillTimeoutPromise.resolve()
       if (sigkillTimeout) clearTimeout(sigkillTimeout)
       healthReporter.stop()
+      this.stopContentLockHeartbeat()
+      await this.releaseContentLocks()
       await overlay.reloading?.promise
 
       logger.info(`DayZServer(${server.pid}) exited with code ${code}`)
@@ -331,6 +350,7 @@ export class Server {
 
     const shutdownChild = async (signal: "SIGTERM" | "SIGINT") => {
       healthReporter.stop()
+      this.stopContentLockHeartbeat()
       await overlay.reloading?.promise
       sigkillTimeoutPromise = sigkillTimeoutPromise ?? new ExternalizedPromise()
       logger.info(`Received ${signal}, forwarding to DayZServer...`)
@@ -347,6 +367,7 @@ export class Server {
       }
       if (sigkillTimeout) clearTimeout(sigkillTimeout)
       const code = await server.exited.catch(() => 1)
+      await this.releaseContentLocks()
       await shutdownProcess(typeof code === "number" ? code : 1, signal)
     }
 
@@ -354,6 +375,71 @@ export class Server {
     process.once("SIGINT", () => void shutdownChild("SIGINT"))
 
     return server
+  }
+
+  private async registerContentLocks(): Promise<void> {
+    if (!this.steam.registerContentLocks || !this.steam.heartbeatContentLocks) return
+
+    const consumerId = getContentConsumerId()
+    const content = this.getContentLocks()
+    if (content.length === 0) return
+
+    await this.steam.registerContentLocks(consumerId, content, config.steam.steamContentLockTtlMs)
+    this.contentLocksReleased = false
+    logger.info(`Registered ${content.length} depot-daemon content lock(s) for ${consumerId}`)
+
+    this.stopContentLockHeartbeat()
+    this.contentLockHeartbeat = setInterval(() => {
+      void this.steam.heartbeatContentLocks?.(consumerId, config.steam.steamContentLockTtlMs).catch((error) => {
+        logger.warn(`Failed to refresh depot-daemon content locks for ${consumerId}: ${String(error)}`)
+      })
+    }, config.steam.steamContentLockHeartbeatMs)
+  }
+
+  private async releaseContentLocks(): Promise<void> {
+    if (!this.steam.releaseContentLocks || this.contentLocksReleased) return
+
+    const consumerId = getContentConsumerId()
+    try {
+      await this.steam.releaseContentLocks(consumerId)
+      this.contentLocksReleased = true
+      logger.info(`Released depot-daemon content locks for ${consumerId}`)
+    } catch (error) {
+      logger.warn(`Failed to release depot-daemon content locks for ${consumerId}: ${String(error)}`)
+    }
+  }
+
+  private stopContentLockHeartbeat(): void {
+    if (!this.contentLockHeartbeat) return
+    clearInterval(this.contentLockHeartbeat)
+    this.contentLockHeartbeat = undefined
+  }
+
+  private getContentLocks(): ContentLock[] {
+    return [
+      { type: "app", appId: config.steam.appID },
+      ...config.meta.modList.map((workshopId) => ({ type: "workshop" as const, appId: config.meta.modAppID, workshopId })),
+    ]
+  }
+
+  private handleLockedAppValidationResult(result: ContentLockedAppValidationResult, label: string): void {
+    const drift = result.validation.missing + result.validation.invalid
+    const consumers = result.activeConsumers.join(", ")
+    const message =
+      `${label} App ${result.content.appId} is locked by ${result.activeConsumers.length} active consumer(s) (${consumers}); ` +
+      `validated read-only with repair suppressed. Missing: ${result.validation.missing}; invalid: ${result.validation.invalid}; unchecked: ${result.validation.unchecked}.`
+
+    if (drift > 0 && config.steam.steamRemoteValidationFailure === "fail") throw new Error(message)
+    if (drift > 0) logger.warn(message)
+    else logger.info(message)
+  }
+
+  private handleLockedWorkshopDownloadResult(result: ContentLockedWorkshopDownloadResult): void {
+    const consumers = result.activeConsumers.join(", ")
+    logger.warn(
+      `[MOD INSTALLATION] Workshop ${result.content.workshopId} for app ${result.content.appId} is locked by ` +
+        `${result.activeConsumers.length} active consumer(s) (${consumers}); skipped download/repair to avoid mutating live content.`
+    )
   }
 
   private attemptToResolveModIDPathToActualPath(path: string): string | null {
@@ -436,6 +522,18 @@ function getSteamWorkshopDownloadOptions(): Omit<DownloadWorkshopFileOptions, "a
 function getProfileManagedSteamValue<K extends SteamProfileManagedKey>(key: K, fallback: (typeof config.steam)[K]): (typeof config.steam)[K] {
   if (hasExplicitConfigValue(["steam", key])) return config.steam[key]
   return fallback
+}
+
+function isContentLockedAppValidationResult(value: unknown): value is ContentLockedAppValidationResult {
+  return typeof value === "object" && value !== null && (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true && (value as { operation?: unknown }).operation === "updateApp"
+}
+
+function isContentLockedWorkshopDownloadResult(value: unknown): value is ContentLockedWorkshopDownloadResult {
+  return typeof value === "object" && value !== null && (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true && (value as { operation?: unknown }).operation === "workshopDownload"
+}
+
+function getContentConsumerId(): string {
+  return config.steam.steamContentConsumerId?.trim() || `serverz:${Bun.env.HOSTNAME ?? "unknown"}:${config.steam.appID}`
 }
 
 function summarizeDownloadResult(depots: Array<{ downloadedBytes: number; completedBytes: number; failedBytes: number }>) {

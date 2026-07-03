@@ -696,6 +696,29 @@ export interface ServerZGeneratedConfig {
          */
         steamContentTimeoutMs: number
         /**
+         * Consumer identity used when registering live content locks with depot-daemon. Defaults to a ServerZ/container/app identifier.
+         * @env STEAM_CONTENT_CONSUMER_ID
+         */
+        steamContentConsumerId?: string
+        /**
+         * Interval for refreshing remote depot-daemon content locks while DayZ is running.
+         * @default 10000
+         * @env STEAM_CONTENT_LOCK_HEARTBEAT_MS
+         */
+        steamContentLockHeartbeatMs: number
+        /**
+         * Depot-daemon content-lock TTL. If heartbeats stop for this long, daemon releases this consumer's locks.
+         * @default 30000
+         * @env STEAM_CONTENT_LOCK_TTL_MS
+         */
+        steamContentLockTtlMs: number
+        /**
+         * Remote depot-daemon validation failure policy when content repair is suppressed by active content locks. `warn` logs and continues startup; `fail` aborts startup.
+         * @default "warn"
+         * @env STEAM_REMOTE_VALIDATION_FAILURE
+         */
+        steamRemoteValidationFailure: "warn" | "fail"
+        /**
          * Echo minor remote Steam details to the console, when connected to depot-daemon.
          * @env ECHO_MINOR_REMOTE_STEAM_DETAILS
          */
@@ -757,6 +780,12 @@ export interface ServerZGeneratedConfig {
          * @env STEAM_WORKSHOP_CYCLE_MODE
          */
         workshopCycleMode: "skip" | "throw"
+        /**
+         * Connection protocol used by steam-user for Steam CM logon. `auto` currently prefers TCP under Bun; use `websocket` when outbound Steam CM TCP is blocked.
+         * @default "auto"
+         * @env STEAM_USER_CONNECTION_PROTOCOL
+         */
+        steamUserConnectionProtocol: "auto" | "tcp" | "websocket"
         /**
          * Download backend. `bun-cdn` is the native fast path.
          * @default "bun-cdn"

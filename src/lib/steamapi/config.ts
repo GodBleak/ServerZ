@@ -24,6 +24,12 @@ export const SteamContentTransportSchema = Type.Union([Type.Literal("uds"), Type
   env: "STEAM_CONTENT_TRANSPORT",
 })
 
+export const SteamRemoteValidationFailureSchema = Type.Union([Type.Literal("warn"), Type.Literal("fail")], {
+  description: "Remote depot-daemon validation failure policy when content repair is suppressed by active content locks. `warn` logs and continues startup; `fail` aborts startup.",
+  default: "warn",
+  env: "STEAM_REMOTE_VALIDATION_FAILURE",
+})
+
 export const SteamRemoteConfigSchema = Type.Object({
   steamContentTransport: SteamContentTransportSchema,
   steamContentSocket: Type.String({
@@ -46,6 +52,24 @@ export const SteamRemoteConfigSchema = Type.Object({
     default: 60000,
     description: "Remote depot-daemon connection and request timeout in milliseconds.",
   }),
+  steamContentConsumerId: Type.Optional(
+    Type.String({
+      env: "STEAM_CONTENT_CONSUMER_ID",
+      defaultDoc: "`serverz:${HOSTNAME}:${APP_ID}`",
+      description: "Consumer identity used when registering live content locks with depot-daemon. Defaults to a ServerZ/container/app identifier.",
+    })
+  ),
+  steamContentLockHeartbeatMs: Type.Number({
+    env: "STEAM_CONTENT_LOCK_HEARTBEAT_MS",
+    default: 10000,
+    description: "Interval for refreshing remote depot-daemon content locks while DayZ is running.",
+  }),
+  steamContentLockTtlMs: Type.Number({
+    env: "STEAM_CONTENT_LOCK_TTL_MS",
+    default: 30000,
+    description: "Depot-daemon content-lock TTL. If heartbeats stop for this long, daemon releases this consumer's locks.",
+  }),
+  steamRemoteValidationFailure: SteamRemoteValidationFailureSchema,
   echoMinorRemoteSteamDetails: Type.Optional(
     Type.Boolean({
       env: "ECHO_MINOR_REMOTE_STEAM_DETAILS",
@@ -160,6 +184,9 @@ export function normalizeSteamConfig(
   } else if (!Array.isArray(steam["depots"])) {
     steam["depots"] = undefined
   }
+
+  const appID = typeof steam["appID"] === "number" || typeof steam["appID"] === "string" ? steam["appID"] : meta["appID"]
+  steam["steamContentConsumerId"] ??= `serverz:${Bun.env.HOSTNAME ?? "unknown"}:${typeof appID === "number" || typeof appID === "string" ? appID : "unknown"}`
 
   const defaultAppProfile = defaults.steam?.appDownloadProfile ?? "fast"
   steam["appDownloadProfile"] = resolveSteamDownloadProfile(steam["appDownloadProfile"], defaultAppProfile)

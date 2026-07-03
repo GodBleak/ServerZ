@@ -49,7 +49,7 @@ async function main() {
   await server.applyTemplates()
   if (config.meta.startDayZServer) {
     removeDirectSignalShutdownHandlers()
-    server.start()
+    await server.start()
   } else {
     logger.warn("Server start disabled. START_DAYZ_SERVER may be set to false")
     await hang({ handleSignals: false }) // prevent boot-loop on containers with restart=unless-stopped
