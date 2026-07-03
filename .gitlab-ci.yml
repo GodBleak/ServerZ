@@ -131,18 +131,19 @@ mirror:github:
       path = Path("readme.md")
       readme = path.read_text()
 
-      source_heading = "# ServerZ"
+      source_heading = "# ServerZ\n"
       mirror_notice = "\n".join([
           "# ServerZ",
+          "",
           "> [!NOTE]",
           "> This is a mirror of [ServerZ on my GitLab instance](https://gitlab.godbleak.dev/godbleak/serverz), and is not the primary repository.",
           "",
       ])
 
-      if readme.startswith(source_heading):
+      if source_heading in readme:
           readme = readme.replace(source_heading, mirror_notice, 1)
       else:
-          raise SystemExit("readme.md does not start with '# ServerZ'")
+          raise SystemExit("readme.md does not contain a '# ServerZ' heading")
 
       path.write_text(readme)
       PY

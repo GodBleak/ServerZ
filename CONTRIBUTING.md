@@ -362,7 +362,7 @@ GitLab is canonical.
 
 CI publishes images from `beta` and tags. For `main`, CI also force-pushes the GitHub mirror. Do not treat GitHub as the source of truth, and do not open MRs there.
 
-The mirror job also rewrites `readme.md` on its way out, inserting a "this is a mirror" notice right after the `# ServerZ` heading before pushing. That's why the canonical `readme.md` in this repo never has that notice — don't add it by hand, the CI job expects the file to start with a bare `# ServerZ` heading and will misbehave if it doesn't.
+The mirror job also rewrites `readme.md` on its way out, inserting a "this is a mirror" notice immediately after the first `# ServerZ` heading before pushing. The canonical `readme.md` may have banner/badge HTML before that heading; don't add the mirror notice by hand, and don't remove the main heading the CI job anchors on.
 
 Do not force-push public branches/tags unless explicitly coordinated.
 
