@@ -1,4 +1,6 @@
-<img src="doc/serverz_banner.png" alt="ServerZ Banner" width="100%" align="center" />
+<div align="center">
+  <img src="doc/serverz_banner.png" alt="ServerZ Banner" width="100%" />
+</div>
 
 <div align="center">
 
