@@ -51,8 +51,9 @@ export const DepotDaemonRuntimeConfigSchema = Type.Object({
   }),
   workshopDirectory: Type.String({
     env: 'STEAM_WORKSHOP_DIRECTORY',
-    default: '/steam/workshop/content',
-    description: 'Directory where depot-daemon installs Steam workshop files. Clients cannot override this.'
+    default: 'steamapps/workshop/content',
+    defaultDoc: '`${STEAM_DOWNLOAD_DIRECTORY}/steamapps/workshop/content/${APP_ID}`',
+    description: 'Directory where depot-daemon installs Steam workshop files. Default-relative paths are resolved from STEAM_DOWNLOAD_DIRECTORY and the request app id; custom paths are used as provided. Clients cannot override this.'
   })
 })
 

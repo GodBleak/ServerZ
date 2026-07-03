@@ -98,11 +98,72 @@ export type WorkshopDownloadRequest = {
   options: Omit<DownloadWorkshopFileOptions, 'appId' | 'publishedFileId'>
 }
 
+export type AppContentLock = {
+  type: 'app'
+  appId: number
+}
+
+export type WorkshopContentLock = {
+  type: 'workshop'
+  appId: number
+  workshopId: number
+}
+
+export type ContentLock = AppContentLock | WorkshopContentLock
+
+export type ContentLockState = {
+  content: ContentLock
+  activeConsumers: string[]
+}
+
+export type RegisterContentLocksRequest = {
+  consumerId: string
+  content: ContentLock[]
+  ttlMs: number
+}
+
+export type ContentLockHeartbeatRequest = {
+  consumerId: string
+  ttlMs: number
+}
+
+export type ReleaseContentLocksRequest = {
+  consumerId: string
+}
+
+export type ContentLockResponse = {
+  ok: true
+  locks: ContentLockState[]
+}
+
+export type ContentLockedAppValidationResult = {
+  contentLocked: true
+  operation: 'updateApp'
+  content: AppContentLock
+  activeConsumers: string[]
+  repairSuppressed: true
+  validation: ValidateAppResult
+}
+
+export type ContentLockedWorkshopDownloadResult = {
+  contentLocked: true
+  operation: 'workshopDownload'
+  content: WorkshopContentLock
+  activeConsumers: string[]
+  repairSuppressed: true
+}
+
+export type UpdateAppResponse = DownloadAppResult | ContentLockedAppValidationResult
+export type WorkshopDownloadResponse = DownloadWorkshopFileResult | ContentLockedWorkshopDownloadResult
+
 export type SteamContentServiceMethods = {
   login(data: LoginRequest): Promise<LoginResponse>
-  updateApp(data: UpdateAppRequest): Promise<DownloadAppResult>
+  updateApp(data: UpdateAppRequest): Promise<UpdateAppResponse>
   verify(data: VerifyAppRequest): Promise<ValidateAppResult>
-  workshopDownload(data: WorkshopDownloadRequest): Promise<DownloadWorkshopFileResult>
+  workshopDownload(data: WorkshopDownloadRequest): Promise<WorkshopDownloadResponse>
+  registerContentLocks(data: RegisterContentLocksRequest): Promise<ContentLockResponse>
+  heartbeatContentLocks(data: ContentLockHeartbeatRequest): Promise<ContentLockResponse>
+  releaseContentLocks(data: ReleaseContentLocksRequest): Promise<ContentLockResponse>
 }
 
 export type SteamContentServiceEvents = {
