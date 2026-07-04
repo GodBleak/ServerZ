@@ -10,6 +10,7 @@ default:
 variables:
   GITLAB_IMAGE: "$CI_REGISTRY_IMAGE"
   GHCR_IMAGE: "ghcr.io/godbleak/serverz"
+  GHCR_USERNAME: "GodBleak"
 
 check:typescript:
   stage: check
@@ -39,7 +40,12 @@ publish:images:
     - docker version
     - docker info
     - printf '%s' "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
-    - printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+    - |
+      if [ -n "${GHCR_TOKEN:-}" ]; then
+        printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+      else
+        echo "GHCR_TOKEN is not available; skipping GHCR image publish."
+      fi
 
   script:
     - |
@@ -51,44 +57,66 @@ publish:images:
         ROOTFUL_TAGS="
           -t $GITLAB_IMAGE:$VERSION
           -t $GITLAB_IMAGE:latest
-          -t $GHCR_IMAGE:$VERSION
-          -t $GHCR_IMAGE:latest
         "
 
         ROOTLESS_TAGS="
           -t $GITLAB_IMAGE:$VERSION-rootless
           -t $GITLAB_IMAGE:rootless
-          -t $GHCR_IMAGE:$VERSION-rootless
-          -t $GHCR_IMAGE:rootless
         "
 
         PUSH_TAGS="
           $GITLAB_IMAGE:$VERSION
           $GITLAB_IMAGE:latest
-          $GHCR_IMAGE:$VERSION
-          $GHCR_IMAGE:latest
           $GITLAB_IMAGE:$VERSION-rootless
           $GITLAB_IMAGE:rootless
-          $GHCR_IMAGE:$VERSION-rootless
-          $GHCR_IMAGE:rootless
         "
+
+        if [ -n "${GHCR_TOKEN:-}" ]; then
+          ROOTFUL_TAGS="$ROOTFUL_TAGS
+            -t $GHCR_IMAGE:$VERSION
+            -t $GHCR_IMAGE:latest
+          "
+
+          ROOTLESS_TAGS="$ROOTLESS_TAGS
+            -t $GHCR_IMAGE:$VERSION-rootless
+            -t $GHCR_IMAGE:rootless
+          "
+
+          PUSH_TAGS="$PUSH_TAGS
+            $GHCR_IMAGE:$VERSION
+            $GHCR_IMAGE:latest
+            $GHCR_IMAGE:$VERSION-rootless
+            $GHCR_IMAGE:rootless
+          "
+        fi
       else
         ROOTFUL_TAGS="
           -t $GITLAB_IMAGE:beta
-          -t $GHCR_IMAGE:beta
         "
 
         ROOTLESS_TAGS="
           -t $GITLAB_IMAGE:beta-rootless
-          -t $GHCR_IMAGE:beta-rootless
         "
 
         PUSH_TAGS="
           $GITLAB_IMAGE:beta
-          $GHCR_IMAGE:beta
           $GITLAB_IMAGE:beta-rootless
-          $GHCR_IMAGE:beta-rootless
         "
+
+        if [ -n "${GHCR_TOKEN:-}" ]; then
+          ROOTFUL_TAGS="$ROOTFUL_TAGS
+            -t $GHCR_IMAGE:beta
+          "
+
+          ROOTLESS_TAGS="$ROOTLESS_TAGS
+            -t $GHCR_IMAGE:beta-rootless
+          "
+
+          PUSH_TAGS="$PUSH_TAGS
+            $GHCR_IMAGE:beta
+            $GHCR_IMAGE:beta-rootless
+          "
+        fi
       fi
 
       docker build --pull --target rootful $ROOTFUL_TAGS .
