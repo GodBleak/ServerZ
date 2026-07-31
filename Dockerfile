@@ -12,7 +12,11 @@ RUN apt update && apt -y install --no-install-recommends \
     util-linux \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /serverz /dayz /install /overrides /data /root/.steam
+RUN groupadd -g 2000 dayz \
+    && mkdir -p /serverz /dayz /install /overrides /data /root/.steam \
+    && chgrp -R dayz /dayz /install /overrides /data \
+    && chmod -R g=u+w /dayz /install /overrides /data \
+    && chmod g+s /dayz /install /overrides /data
 
 WORKDIR /serverz
 
