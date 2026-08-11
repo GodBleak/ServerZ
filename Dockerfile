@@ -1,5 +1,14 @@
 FROM docker.io/oven/bun:1.3.14-debian AS runtime-base
 
+LABEL org.opencontainers.image.title="ServerZ" \
+      org.opencontainers.image.authors="GodBleak <meow@godbleak.dev>" \
+      org.opencontainers.image.description="DayZ in a box! — ServerZ: A modern, container-ready DayZ server manager. Configuration so easy an infected could do it." \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://gitlab.godbleak.dev/GodBleak/ServerZ" \
+      org.opencontainers.image.url="https://gitlab.godbleak.dev/GodBleak/ServerZ" \
+      org.opencontainers.image.documentation="https://gitlab.godbleak.dev/GodBleak/ServerZ" \
+      com.getarcaneapp.arcane.icon="https://gitlab.godbleak.dev/uploads/-/system/project/avatar/42/ServerZ_EZ.png"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt -y install --no-install-recommends \
