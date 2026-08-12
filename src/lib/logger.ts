@@ -80,7 +80,12 @@ export class Logger {
   }
 
   private static formatArg(this: void, arg: unknown): string {
-    if (arg instanceof Error) return arg.stack ?? `${arg.name}: ${arg.message}`
+    if (arg instanceof Error) {
+      const base = arg.stack ?? `${arg.name}: ${arg.message}`
+      const hasExtra = "errors" in arg || "failures" in arg || "cause" in arg
+      if (!hasExtra) return base
+      return `${base}\n${Bun.inspect(arg, { depth: Infinity, colors: false })}`
+    }
     if (typeof arg === "string") return arg
     return Bun.inspect(arg, { depth: Infinity, colors: false })
   }
