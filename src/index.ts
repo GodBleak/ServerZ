@@ -20,6 +20,11 @@ async function main() {
     machineName: "serverz",
     loginTimeout: config.steam.steamContentTimeoutMs,
     onQRChallenge,
+    localOptions: {
+      steamUserOptions: {
+        enablePicsCache: config.steam.enablePicsCache,
+      },
+    },
     remote: {
       transport: config.steam.steamContentTransport,
       socketPath: config.steam.steamContentSocket,

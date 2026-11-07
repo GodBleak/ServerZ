@@ -47,6 +47,10 @@ If you believe you still need COPY_MISSION, please open an issue:
 https://gitlab.godbleak.dev/godbleak/ServerZ#issues`
   )
 
+if (!config.steam.enablePicsCache) {
+  logger.debug("Steam PICS metadata cache disabled")
+}
+
 export function loadConfig(): unknown {
   return nodeConfig.get<unknown>("serverz")
 }

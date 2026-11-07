@@ -781,6 +781,12 @@ export interface ServerZGeneratedConfig {
          */
         workshopCycleMode: "skip" | "throw"
         /**
+         * Enable steam-user PICS metadata caching.
+         * @default true
+         * @env STEAM_ENABLE_PICS_CACHE
+         */
+        enablePicsCache: boolean
+        /**
          * Connection protocol used by steam-user for Steam CM logon. `auto` currently prefers TCP under Bun; use `websocket` when outbound Steam CM TCP is blocked.
          * @default "auto"
          * @env STEAM_USER_CONNECTION_PROTOCOL

@@ -63,7 +63,12 @@ export const DepotClientConfigSchema = Type.Object({
     default: 'skip',
     description: 'Behavior when workshop dependencies contain cycles.'
   }),
-
+  enablePicsCache: Type.Boolean({
+    env: "STEAM_ENABLE_PICS_CACHE",
+    default: true,
+    description:
+      "Enable steam-user PICS metadata caching.",
+  }),
   steamUserConnectionProtocol: Type.Union([Type.Literal('auto'), Type.Literal('tcp'), Type.Literal('websocket')], {
     env: 'STEAM_USER_CONNECTION_PROTOCOL',
     default: 'auto',
