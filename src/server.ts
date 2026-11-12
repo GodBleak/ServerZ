@@ -230,8 +230,7 @@ export class Server {
           directory: config.meta.modPath,
         })
       } catch (error) {
-        logger.error(`[MOD INSTALLATION] Failed to download Workshop item ${mod} for app ${config.meta.modAppID}`, error)
-        throw error
+        throw new Error(`[MOD INSTALLATION] Failed to download Workshop item ${mod} for app ${config.meta.modAppID}`, { cause: error })
       }
 
       if (isContentLockedWorkshopDownloadResult(result)) {
