@@ -82,7 +82,7 @@ export class Logger {
   private static formatArg(this: void, arg: unknown): string {
     if (arg instanceof Error) {
       const base = arg.stack ?? `${arg.name}: ${arg.message}`
-      const hasExtra = "errors" in arg || "failures" in arg || "cause" in arg
+      const hasExtra = Reflect.ownKeys(arg).some((key) => key !== "stack" && key !== "message")
       if (!hasExtra) return base
       return `${base}\n${Bun.inspect(arg, { depth: Infinity, colors: false })}`
     }

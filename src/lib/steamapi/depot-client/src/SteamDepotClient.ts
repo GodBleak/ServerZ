@@ -860,7 +860,12 @@ export class SteamDepotClient extends EventEmitter {
         )
       }
 
-      throw error
+      throw new Error(
+        `Failed to retrieve Steam manifest ${manifestId} ` +
+          `(app=${options.appId}, contentApp=${contentAppId}, ` +
+          `depot=${options.depotId}, branch=${branch})`,
+        { cause: error }
+      )
     }
   }
 
