@@ -420,6 +420,10 @@
                 "__format": "boolean"
             },
             "workshopCycleMode": "STEAM_WORKSHOP_CYCLE_MODE",
+            "enablePicsCache": {
+                "__name": "STEAM_ENABLE_PICS_CACHE",
+                "__format": "boolean"
+            },
             "downloadBackend": "STEAM_DOWNLOAD_BACKEND",
             "maxConcurrentChunks": {
                 "__name": "STEAM_MAX_CONCURRENT_CHUNKS",

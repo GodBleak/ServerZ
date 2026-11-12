@@ -107,6 +107,7 @@ const downloadProfiles = {
 | `STEAM_WORKSHOP_INCLUDE_CHILDREN` | `true` | Include child/dependency workshop items. |
 | `STEAM_WORKSHOP_SEPARATE_ITEM_DIRS` | `true` | Keep each workshop item in a separate directory. |
 | `STEAM_WORKSHOP_CYCLE_MODE` | `skip` | Behavior when workshop dependencies contain cycles. |
+| `STEAM_ENABLE_PICS_CACHE` | `true` | Enable steam-user PICS metadata caching. |
 | `STEAM_USER_CONNECTION_PROTOCOL` | `auto` | Connection protocol used by steam-user for Steam CM logon. `auto` currently prefers TCP under Bun; use `websocket` when outbound Steam CM TCP is blocked. |
 | `STEAM_DOWNLOAD_BACKEND` | `bun-cdn` | Download backend. `bun-cdn` is the native fast path. |
 | `STEAM_MAX_CONCURRENT_CHUNKS` | `32` | Max concurrent chunks per depot for `bun-cdn`/`managed-chunks`. |

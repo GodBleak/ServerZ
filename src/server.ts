@@ -222,10 +222,16 @@ export class Server {
     for (const [index, mod] of config.meta.modList.entries()) {
       logger.info(`[MOD INSTALLATION] Downloading ${mod} (${index + 1}/${config.meta.modList.length})`)
 
-      const result = await this.steam.workshopDownload(config.meta.modAppID, mod, {
-        ...getSteamWorkshopDownloadOptions(),
-        directory: config.meta.modPath,
-      })
+      let result: Awaited<ReturnType<SteamAPI["workshopDownload"]>>
+
+      try {
+        result = await this.steam.workshopDownload(config.meta.modAppID, mod, {
+          ...getSteamWorkshopDownloadOptions(),
+          directory: config.meta.modPath,
+        })
+      } catch (error) {
+        throw new Error(`[MOD INSTALLATION] Failed to download Workshop item ${mod} for app ${config.meta.modAppID}`, { cause: error })
+      }
 
       if (isContentLockedWorkshopDownloadResult(result)) {
         this.handleLockedWorkshopDownloadResult(result)
@@ -525,11 +531,21 @@ function getProfileManagedSteamValue<K extends SteamProfileManagedKey>(key: K, f
 }
 
 function isContentLockedAppValidationResult(value: unknown): value is ContentLockedAppValidationResult {
-  return typeof value === "object" && value !== null && (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true && (value as { operation?: unknown }).operation === "updateApp"
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true &&
+    (value as { operation?: unknown }).operation === "updateApp"
+  )
 }
 
 function isContentLockedWorkshopDownloadResult(value: unknown): value is ContentLockedWorkshopDownloadResult {
-  return typeof value === "object" && value !== null && (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true && (value as { operation?: unknown }).operation === "workshopDownload"
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as { contentLocked?: unknown; operation?: unknown }).contentLocked === true &&
+    (value as { operation?: unknown }).operation === "workshopDownload"
+  )
 }
 
 function getContentConsumerId(): string {

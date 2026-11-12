@@ -80,6 +80,7 @@
             "language": "english",
             "workshopIncludeChildren": true,
             "workshopSeparateItemDirectories": true,
+            "enablePicsCache": true,
             "workshopCycleMode": "skip",
             "downloadBackend": "bun-cdn",
             "maxConcurrentChunks": 32,

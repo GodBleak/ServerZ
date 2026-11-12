@@ -75,6 +75,7 @@ import type {
   LoginWithCredentialsOptions,
   SteamDepotClientOptions,
 } from "./types.js"
+import { EResult } from "steam-session"
 
 // Default LoginID ("SK2") prevents concurrent sessions under the same account
 // from kicking each other, reducing forced re-authentication cycles.
@@ -860,7 +861,12 @@ export class SteamDepotClient extends EventEmitter {
         )
       }
 
-      throw error
+      throw new Error(
+        `Failed to retrieve Steam manifest ${manifestId} ` +
+          `(app=${options.appId}, contentApp=${contentAppId}, ` +
+          `depot=${options.depotId}, branch=${branch})`,
+        { cause: error }
+      )
     }
   }
 
@@ -1694,6 +1700,8 @@ export class SteamDepotClient extends EventEmitter {
       const detailsById = await this.getPublishedFileDetails(publishedFileId)
       const details = detailsById[publishedFileId] ?? Object.values(detailsById)[0]
       if (!details) throw new Error(`Steam returned no published-file details for ${publishedFileId}`)
+      if (details.result !== undefined && details.result !== 1)
+        throw new Error(`Steam rejected Workshop item ${publishedFileId} (result=${details.result}: ${EResult[details.result] ?? "Unknown"})`)
 
       // Use Steam's published-file consumer_appid as the item's own app identity.
       // Each child's consumer_appid reflects the app the content genuinely belongs to,
@@ -1745,7 +1753,9 @@ export class SteamDepotClient extends EventEmitter {
         return resolved
       }
 
-      if (details.hcontent_file !== undefined && String(details.hcontent_file) !== "0") {
+      const manifestId = details.hcontent_file == null ? undefined : String(details.hcontent_file)
+
+      if (manifestId && /^[1-9]\d*$/.test(manifestId)) {
         const resolved: ResolvedWorkshopFile = {
           publishedFileId,
           appId: resolvedAppId,
@@ -1755,7 +1765,7 @@ export class SteamDepotClient extends EventEmitter {
           source: "manifest",
           contentAppId,
           depotId: await this.getWorkshopDepotId(contentAppId),
-          manifestId: String(details.hcontent_file),
+          manifestId,
           details,
         }
         context.resolved.set(publishedFileId, resolved)
