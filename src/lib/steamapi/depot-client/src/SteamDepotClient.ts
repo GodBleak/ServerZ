@@ -1699,6 +1699,7 @@ export class SteamDepotClient extends EventEmitter {
       const detailsById = await this.getPublishedFileDetails(publishedFileId)
       const details = detailsById[publishedFileId] ?? Object.values(detailsById)[0]
       if (!details) throw new Error(`Steam returned no published-file details for ${publishedFileId}`)
+      if (details.result !== undefined && details.result !== 1) throw new Error(`Steam rejected Workshop item ${publishedFileId} (result=${details.result})`)
 
       // Use Steam's published-file consumer_appid as the item's own app identity.
       // Each child's consumer_appid reflects the app the content genuinely belongs to,
@@ -1750,7 +1751,9 @@ export class SteamDepotClient extends EventEmitter {
         return resolved
       }
 
-      if (details.hcontent_file !== undefined && String(details.hcontent_file) !== "0") {
+      const manifestId = details.hcontent_file == null ? undefined : String(details.hcontent_file)
+
+      if (manifestId && /^[1-9]\d*$/.test(manifestId)) {
         const resolved: ResolvedWorkshopFile = {
           publishedFileId,
           appId: resolvedAppId,
@@ -1760,7 +1763,7 @@ export class SteamDepotClient extends EventEmitter {
           source: "manifest",
           contentAppId,
           depotId: await this.getWorkshopDepotId(contentAppId),
-          manifestId: String(details.hcontent_file),
+          manifestId,
           details,
         }
         context.resolved.set(publishedFileId, resolved)
