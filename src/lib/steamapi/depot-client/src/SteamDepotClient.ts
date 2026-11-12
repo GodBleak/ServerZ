@@ -75,6 +75,7 @@ import type {
   LoginWithCredentialsOptions,
   SteamDepotClientOptions,
 } from "./types.js"
+import { EResult } from "steam-session"
 
 // Default LoginID ("SK2") prevents concurrent sessions under the same account
 // from kicking each other, reducing forced re-authentication cycles.
@@ -1699,7 +1700,8 @@ export class SteamDepotClient extends EventEmitter {
       const detailsById = await this.getPublishedFileDetails(publishedFileId)
       const details = detailsById[publishedFileId] ?? Object.values(detailsById)[0]
       if (!details) throw new Error(`Steam returned no published-file details for ${publishedFileId}`)
-      if (details.result !== undefined && details.result !== 1) throw new Error(`Steam rejected Workshop item ${publishedFileId} (result=${details.result})`)
+      if (details.result !== undefined && details.result !== 1)
+        throw new Error(`Steam rejected Workshop item ${publishedFileId} (result=${details.result}: ${EResult[details.result] ?? "Unknown"})`)
 
       // Use Steam's published-file consumer_appid as the item's own app identity.
       // Each child's consumer_appid reflects the app the content genuinely belongs to,
