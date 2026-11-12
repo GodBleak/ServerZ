@@ -1710,19 +1710,22 @@ export class SteamDepotClient extends EventEmitter {
       const resolvedAppId = toNumber(details.consumer_appid, 0) || appId
       const contentAppId = resolvedAppId
       const fileType = toNumber(details.file_type, 0)
-      const childIds = (details.children ?? [])
-        .map((child) => child.publishedfileid)
-        .filter((id): id is string | number | bigint => id !== undefined && id !== null)
-        .map(String)
+      const hasManifest = details.hcontent_file != null && /^[1-9]\d*$/.test(String(details.hcontent_file))
+      const hasFileUrl = typeof details.file_url === "string" && details.file_url.length > 0
 
-      if (includeChildren && childIds.length > 0) {
-        const children: ResolvedWorkshopFile[] = []
-        for (const childId of childIds) {
-          const child = await this.resolveWorkshopFileRecursive(appId, childId, includeChildren, context)
-          if (child) children.push(child)
-        }
+      if (includeChildren && (fileType === 2 || (!hasManifest && !hasFileUrl))) {
+        const childIds = (details.children ?? [])
+          .map((child) => child.publishedfileid)
+          .filter((id): id is string | number | bigint => id !== undefined && id !== null)
+          .map(String)
 
-        if (fileType === 2 || (!details.hcontent_file && !details.file_url)) {
+        if (childIds.length > 0) {
+          const children: ResolvedWorkshopFile[] = []
+          for (const childId of childIds) {
+            const child = await this.resolveWorkshopFileRecursive(appId, childId, includeChildren, context)
+            if (child) children.push(child)
+          }
+
           const resolved: ResolvedWorkshopFile = {
             publishedFileId,
             appId: resolvedAppId,
