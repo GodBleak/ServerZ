@@ -1,5 +1,31 @@
 # ServerZ changelog
 
+## [2.0.1] — 2026-11-12
+
+### Fixes
+
+- Fixed directory permissions to improve compatibility with rootless containers and non-default container users.
+- Fixed Workshop item resolution to reject invalid or inaccessible items before attempting manifest downloads.
+- Fixed invalid Workshop manifest IDs being passed to Steam's CDN API.
+
+### Steam / Workshop downloads
+
+- Added validation of Steam Workshop API responses, including descriptive Steam result codes.
+- Improved Workshop download errors to identify the affected Workshop item and application.
+- Added contextual information to manifest retrieval errors, including application, depot, manifest, and branch identifiers.
+
+### Logging
+
+- Improved error logging to preserve additional error properties and nested causes.
+- Added more informative Steam API error messages, including human-readable `EResult` values.
+- Consolidated Workshop installation failures into a single error chain to avoid duplicate logging.
+
+### Container / runtime
+
+- Simplified directory permission setup for container deployments.
+- Added OCI image metadata, including project information, source repository, and documentation links.
+- Added Arcane container icon metadata for improved integration with Arcane.
+
 ## [2.0.0] — 2026-07-03
 
 ### Highlights
