@@ -12,6 +12,9 @@
 
 # ServerZ
 
+> [!NOTE]
+> This is a mirror of [ServerZ on my GitLab instance](https://gitlab.godbleak.dev/godbleak/serverz), and is not the primary repository.
+
 A DayZ dedicated server orchestrator for containerized environments. It handles the whole server lifecycle — Steam authentication, installation, mod and map management, configuration, and the running server process itself — through nothing but environment variables.
 
 ## Features
