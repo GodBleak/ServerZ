@@ -1,0 +1,40 @@
+diff --git a/components/apps.js b/components/apps.js
+index a969464d6f5a67e1e8e4f7eb2340c2a637449688..206b50eb411dc19f15f6573d9872f818db0994d7 100644
+--- a/components/apps.js
++++ b/components/apps.js
+@@ -231,7 +231,7 @@ class SteamUserApps extends SteamUserAppAuth {
+ 					cache.packages = cache.packages || {};
+ 
+ 					(body.apps || []).forEach((app) => {
+-						let appInfoVdf = app.buffer ? app.buffer.toString('utf8') : '';
++						let appInfoVdf = app.buffer.toString('utf8');
+ 						// It seems that Steam appends a NUL byte. Unsure if this is universal or not, but to make sure
+ 						// that things work regardless of whether there's a NUL byte at the end, just remove it if it's there.
+ 						appInfoVdf = appInfoVdf.replace(/\0$/, '');
+@@ -239,7 +239,7 @@ class SteamUserApps extends SteamUserAppAuth {
+ 						let data = {
+ 							changenumber: app.change_number,
+ 							missingToken: !!app.missing_token,
+-							appinfo: app.buffer ? VDF.parse(appInfoVdf).appinfo : null
++							appinfo: VDF.parse(appInfoVdf).appinfo
+ 						};
+ 
+ 						if ((!cache.apps[app.appid] && requestType == PICSRequestType.Changelist) || (cache.apps[app.appid] && cache.apps[app.appid].changenumber != data.changenumber)) {
+@@ -295,7 +295,7 @@ class SteamUserApps extends SteamUserAppAuth {
+ 					// _parsedData will be populated if we have the PICS cache enabled.
+ 					// If we don't, we need to parse the data here.
+ 
+-					let appInfoVdf = app.buffer ? app.buffer.toString('utf8') : '';
++					let appInfoVdf = app.buffer.toString('utf8');
+ 					// It seems that Steam appends a NUL byte. Unsure if this is universal or not, but to make sure
+ 					// that things work regardless of whether there's a NUL byte at the end, just remove it if it's there.
+ 					appInfoVdf = appInfoVdf.replace(/\0$/, '');
+@@ -303,7 +303,7 @@ class SteamUserApps extends SteamUserAppAuth {
+ 					response.apps[app.appid] = app._parsedData || {
+ 						changenumber: app.change_number,
+ 						missingToken: !!app.missing_token,
+-						appinfo: app.buffer ? VDF.parse(appInfoVdf).appinfo : null
++						appinfo: VDF.parse(appInfoVdf).appinfo
+ 					};
+ 
+ 					let index = appids.indexOf(app.appid);

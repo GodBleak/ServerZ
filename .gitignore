@@ -10,6 +10,8 @@
 !templates/**
 !tests
 !tests/**
+!patches
+!patches/**
 !scripts
 !scripts/**
 !.gitignore

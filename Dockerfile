@@ -31,6 +31,7 @@ WORKDIR /serverz
 # Copy lockfile and package.json first for better layer caching
 COPY package.json bun.lock* ./
 COPY src/lib/steamapi/depot-client/package.json ./src/lib/steamapi/depot-client/
+COPY patches/ ./patches/
 
 RUN bun install --frozen-lockfile --production
 
